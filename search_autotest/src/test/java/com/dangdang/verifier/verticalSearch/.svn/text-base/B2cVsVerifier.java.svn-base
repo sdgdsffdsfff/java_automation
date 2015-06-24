@@ -1,0 +1,422 @@
+package com.dangdang.verifier.verticalSearch;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.dom4j.Document;
+import org.dom4j.Node;
+
+import com.dangdang.client.DBAction;
+import com.dangdang.client.SearchRequester;
+import com.dangdang.client.URLBuilder;
+import com.dangdang.data.FuncPermReco;
+import com.dangdang.data.VerticalSearchQuery;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IVerticalSearchVerifer;
+
+public class B2cVsVerifier implements IVerticalSearchVerifer {
+
+	@Override
+	public boolean verifier(VerticalSearchQuery query) {
+//		Map<String,String> argsMap = new HashMap<String,String>();
+//		argsMap.put("vertical_search",query.getPerm_id());
+		Map<String,String> urlMap = URLBuilder.converURLPars("vertical_search", query.getQuery().trim(),null);
+		String url = URLBuilder.buildURL(urlMap);
+		String xml = SearchRequester.get(url);
+		try{
+			Document doc = XMLParser.read(xml);
+			String templateType = XMLParser.templateType(doc);
+			//进入垂搜
+			if(templateType.equals("b2c_category_page")){
+				logger.info(" - [LOG_INSIDE] - "+query.getQuery());
+				String shopProducts = query.getShop_products();
+				//不再区分new和hot，只是按照运营工具设置的顺序排列
+				String newORHotString = query.getHot_products();
+				if(shopProducts == null){
+					logger.error(" - [LOG_FAILED] - "+"The query "+query.getQuery()+" is not vertical_search query!");
+					return false;
+				}
+				if(shopProducts.equals("")){
+					logger.error(" - [LOG_FAILED] - "+"The query "+query.getQuery()+" is not vertical_search query!");
+					return false;
+				}
+				if(shopProducts.trim().split(",").length<5){
+					logger.error(" - [LOG_FAILED] - "+"The query "+query.getQuery()+" is not vertical_search query!");
+					return false;
+				}
+				
+				List itemList = XMLParser.templateItem(doc);
+				//验证item数量>=5
+				if(itemList.size()<5||itemList.size()>20){
+					logger.error(" - [LOG_FAILED] - "+"The new/hot product count is not between 5 and 20!");
+					logger.error("The standard product count in search result:"+itemList.size());
+					return false;
+				}
+				
+//				String lastPromotionLabel = null;
+				int count = shopProducts.trim().split(",").length;
+				String[] newOrhot = newORHotString.trim().split(",");
+//				if(shopProducts.trim().split(",").length>1){
+//					count = hotProducts.trim().split("\\|").length*2;
+//				}else{
+//					count = shopProducts.trim().split("\\|").length*2;
+//				}
+				
+				for(int i=0;i<count;i++){
+					String productId = XMLParser.product_id((Node)itemList.get(i));
+					
+					//按配置顺序展示
+					String promotionLabel = XMLParser.promotion_label((Node)itemList.get(i));
+					if(promotionLabel.equals(newOrhot[i].toString())){
+						logger.error(" - [LOG_FAILED] - "+"The product "+productId +"'s promotionLabel is wrong");
+						return false;
+					}
+//					if(lastPromotionLabel==null){
+//						lastPromotionLabel = promotionLabel;
+//					}else{
+//						if(lastPromotionLabel.equals("new_sell")){
+//							if(!promotionLabel.endsWith("hot_sell")){
+//								logger.error(" - [LOG_FAILED] - "+"The product "+productId +" is not in order");
+//								return false;	
+//							}
+//						}else if(promotionLabel.endsWith("hot_sell")){
+//							if(!promotionLabel.endsWith("new_sell")){
+//								logger.error(" - [LOG_FAILED] - "+"The product "+productId +" is not in order");
+//								return false;	
+//							}
+//						}
+//						lastPromotionLabel = promotionLabel;
+//					}
+					//是预设的商品
+					if(!shopProducts.contains(productId)){
+						logger.error(" - [LOG_FAILED] - "+"The product "+productId +" is not in new/hot products");
+						return false;
+					}
+					if (!isAvailable(productId)) {
+						logger.error(" - [LOG_FAILED] - "+"The product "+productId +" is not Available");
+						return false;
+					}
+					
+//					//有图片
+//					if(Integer.parseInt(XMLParser.product_numImage((Node)itemList.get(i)))<1){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+productId +" has no picture!");
+//						return false;
+//					}
+//					//有库存
+//					if(!XMLParser.product_StockStatus((Node)itemList.get(i)).trim().equals("1")&&!XMLParser.product_StockStatus((Node)itemList.get(i)).trim().equals("2")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+productId +" has no stock!");
+//						return false;
+//					}
+//					//非预售
+//					if(!XMLParser.product_preSale((Node)itemList.get(i)).trim().equals("0")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+productId +" is presale!");
+//						return false;
+//					}
+//					//有价格
+//					if(XMLParser.product_dd_sale_price((Node)itemList.get(i)).trim().equals("")||XMLParser.product_dd_sale_price((Node)itemList.get(i)).trim().equals("0")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+productId +" has no price!");
+//						return false;
+//					}
+//					//未下架
+//					if(!XMLParser.product_displayStatus((Node)itemList.get(i)).trim().equals("0")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+productId +" is off shelf!");
+//						return false;
+//					}
+				}
+				
+				//######################    推荐验证  #####################################//不做自动测试回归
+				//得到带permid的所有前200个品
+//				List<Node> allNodes = getTheRange(query,0,true);
+//				//从中找到 is_reco=1的所有品
+//				List is_reco = getReco(allNodes,query.getPerm_id());
+//				
+//				//推荐的品少于4个，并且不是0个
+//				if(is_reco.size()<4 && is_reco.size()!=0){
+//					logger.error(" - [LOG_FAILED] - "+"Recommed product less than 4; Number:"+is_reco.size());
+//					return false;
+//				//推荐的品多余4个
+//				}else if (is_reco.size()>4){
+//					logger.error(" - [LOG_FAILED] - "+"Recommed product great than 4; Number:"+is_reco.size());
+//					return false;
+//					
+//				//推荐的品为0个或者4个
+//				}else{
+//					//得到不带permid查询的第57～200的所有品
+//					List<Node> partNode = getTheRange(query, 57, false);
+//					
+//					//从中计算出应该被推荐的有序品列表（要不是0个，要不是4个）
+//					List pre_list = doReco(query,partNode);
+//					
+//					//如果计算出来的品个数不相符
+//					if(is_reco.size()!=pre_list.size()){
+//						logger.error(" - [LOG_FAILED] - "+"Actual recommend product count does not equal expect recommend product count! Actual:"+is_reco.size()+" Expect:"+pre_list.size());
+//						return false;
+//						
+//					//如果相符（要不都是0，要不都是4）
+//					}else{
+//						if(pre_list.toString().equals(is_reco.toString())){
+//							logger.info(" - [LOG_SUCCESS] - "+"recommend product is prefect!!!!");
+//							return true;
+//						}else{
+//							for(int i=0;i<pre_list.size();i++){
+//								if(!((List)pre_list.get(i)).get(1).toString().equals(((List)is_reco.get(i)).get(1).toString())){
+//									logger.error(" - [LOG_FAILED] - "+"Actual recommed product does not equal expect recommed product! expect:"+pre_list+" actual:"+is_reco);
+//									return false;
+//								}
+//							}
+//						}
+//					}
+//					logger.info(" - [LOG_SUCCESS] - "+"recommend product is prefect!!!!");
+//					return true;
+//				}
+		    //未进入垂搜
+			}else{
+				int num_avaiShopProduct = 0;
+				String [] products = query.getShop_products().split(",");
+				if(products.length<=0){
+					logger.error(" - [LOG_FAILED] - "+"No shop product here！");
+					return false;
+				}
+				List<String> q_products = Arrays.asList(products);
+				List<String> query_products = new ArrayList<String>(q_products);
+				
+				//必填项
+				if(isNullOrEmpty(query.getQuery())||isNullOrEmpty(query.getShop_id())||isNullOrEmpty(query.getBrand_id())
+						||isNullOrEmpty(query.getShop_url())||isNullOrEmpty(query.getShop_products())){
+					logger.info(" - [LOG_SUCCESS] - "+"The required fields is missing");
+					return true;
+				}
+
+				//如果设置中招商品就少于5个，该设置不生效
+				if(query_products.size()<5){
+					logger.info(" - [LOG_SUCCESS] - "+"The number of products in query setting is less then 5");
+					logger.info(" - [LOG_SUCCESS] - "+"products in query setting:"+query.getShop_products());
+					return true;
+				}
+				else{
+					//得到有效的招商品个数
+					for(String fquery:query_products){
+						if(isAvailable(fquery)){
+							num_avaiShopProduct++;
+						}
+					}
+					//如果有效的招商品是5个以上，但是没有进入垂搜
+					if(num_avaiShopProduct>= 5){
+						logger.error(" - [LOG_FAILED] - "+"There are more than 5 shop products！num_avaiShopProduct="+num_avaiShopProduct);
+						return false;
+					}
+				}
+				logger.debug("not vertical_search");
+				return true;		
+			}	
+		}catch(Exception e){
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(exception);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isNullOrEmpty(String str){
+		if(str==null){
+			return true;
+		}
+		if(str.trim().equals("")){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 计算与permid对应品牌倾向度的商品排序列表，取得应该会被推荐的4个品
+	 * @param query 本次查询的query
+	 * @param list    本次的品范围
+	 * @return
+	 */
+	public List doReco(VerticalSearchQuery query,List<Node> list){
+		
+		//存储最终结果的列表
+		List prodlist = new ArrayList();
+		//得到query对应的permid
+		String  perm_id = query.getPerm_id();
+		
+		//查询数据库中，perm_id对应的品牌倾向度
+		DBAction action = new DBAction();
+		action.setPerm_condition("perm_id ='"+perm_id+"'");
+		List<FuncPermReco> permReco = action.getFuncPermReco();
+		
+		//该permid对应的倾向
+		String [] brands = permReco.get(0).getBrand_reco().split("\t");
+		
+		//得到不带permid的查询中，57～200的品信息
+		List<Node> prodRange = getTheRange(query, 57,false);
+		
+		
+		//创建一个可排序map,用来对查询结果排序
+		SortedMap<String,Double> scopeReco = new TreeMap<String,Double>();
+		
+		for(Node prodNode : prodRange){
+			//得到商品必要信息    品牌，品id,与品分
+			String brand = XMLParser.product_brand(prodNode);
+			String prodid = XMLParser.product_id(prodNode);
+			String scope = XMLParser.product_scope(prodNode);
+			for(String prebrand: brands){
+				String [] brand_part = prebrand.split(":");
+				if(brand.equals(brand_part[0].trim())&&Double.valueOf(scope)*Double.valueOf(brand_part[1].trim())>1){
+					scopeReco.put(prodid, Double.valueOf(scope)*Double.valueOf(brand_part[1].trim()));
+				}
+			}
+		}
+		
+		List<Map.Entry<String, Double>> sortlist = new LinkedList<Map.Entry<String,Double>>(scopeReco.entrySet());
+		//对Map进行排序
+		 Collections.sort( sortlist, new Comparator<Map.Entry<String,Double>>()  
+			        {  
+			 //重写比较方法，进行值比对
+			            public int compare( Map.Entry<String,Double> o1, Map.Entry<String, Double> o2 )  
+			            {  
+			                return (o2.getValue()).compareTo( o1.getValue() );  
+			            }  
+			        } );  
+		 
+		//取前4个结果
+		for(int i =0;i<4 && sortlist.size()>=4;i++){
+			List ls = new ArrayList();
+			ls.add(sortlist.get(i).getKey());
+			ls.add(sortlist.get(i).getValue());
+			prodlist.add(ls);
+		}
+		return prodlist;
+	}
+	
+	/**
+	 * 得到指定范围的品id
+	 * @param query
+	 * @param start
+	 * @param withTerm
+	 * @return
+	 */
+	public List<Node> getTheRange(VerticalSearchQuery query,int start,boolean withTerm){
+		//保存结果的列表
+		List<Node> list = new ArrayList<Node>();
+		//访问搜索后台时的参数map
+		Map<String,String> argsMap = new HashMap<String,String>();
+		if(withTerm){
+		argsMap.put("vertical_search",query.getPerm_id());
+		}
+		Map<String,String> urlMap = URLBuilder.converURLPars("vertical_search", query.getQuery().trim(),argsMap);
+		//品迭代器，范围不能超过200
+		ProdIterator iterator = new ProdIterator(urlMap,200);
+		
+		while(iterator.hasNext()){
+			//从开始位置开始
+			if((iterator.getpageIndex()-1)*iterator.getPageSize()+iterator.getPoint()+2>=start){
+				list.add(iterator.next());
+			}else{
+				iterator.next();
+			}
+		}
+		return list;
+	}
+	
+	
+	/**
+	 * 得到搜索结果中的推荐品
+	 * @param list
+	 * @return
+	 */
+	public List getReco(List<Node> list,String perm_id){
+		Map<String,Double> reco = new HashMap<String,Double>();
+		List recoList = new ArrayList();
+		//查询数据库中，perm_id对应的品牌倾向度
+		DBAction action = new DBAction();
+		action.setPerm_condition("perm_id ='"+perm_id+"'");
+		List<FuncPermReco> permReco = action.getFuncPermReco();
+		String [] brands = permReco.get(0).getBrand_reco().split("\t");
+
+		//记录取到推荐品的位置
+		int listindex=0;
+		while(listindex<list.size()){
+			if(XMLParser.product_isReco(list.get(listindex)).equals("1")){
+				Double score = 0.0;
+				for(String str:brands){
+					if(str.split(":")[0].equals(XMLParser.product_brand(list.get(listindex)))){
+						score = Double.parseDouble(XMLParser.product_scope(list.get(listindex)))*Double.parseDouble(str.split(":")[1]);
+					}
+				}
+				List ls = new ArrayList();
+				ls.add(XMLParser.product_id(list.get(listindex)));
+				ls.add(score);
+				recoList.add(ls);
+				//reco.put(XMLParser.product_id(list.get(listindex)),score);
+
+				if(listindex>=56&&listindex<60){	
+					listindex++;
+					continue;
+				}else{
+					logger.error(" - [LOG_FAILED] - "+"the recommend product is not listed at the correct position!");
+					logger.error(String.format("Product Position: %s",String.valueOf(listindex)));
+					break;
+				}
+			}
+			listindex++;
+		}
+		return recoList;
+	}
+	
+	public boolean isAvailable(String pid){
+		List<Node> nodelist = URLBuilder.porductSearch(pid.trim(),true);
+		if(nodelist.size()==0){
+			return false;
+			
+		}else{
+			Node node = nodelist.get(0);
+			String numImage = XMLParser.product_numImage(node);
+			boolean condition_image = Integer.valueOf(numImage)>=1;
+			String stock = XMLParser.product_StockStatus(node);
+			boolean condition_stock = stock.equals("1");
+//			String display = XMLParser.product_displayStatus(node);
+//			boolean condition_display = display.equals("0");
+			String presale = XMLParser.product_preSale(node);
+			boolean condition_presale = presale.equals("0");
+			String price = XMLParser.product_dd_sale_price(node);
+			boolean condition_price = !(price.equals("0")|price.equals("0.0")|price.equals("0.00"));
+			if(!condition_image){
+				logger.error("No image for it. numImage="+numImage);
+				return false;
+			}
+			if(!condition_stock){
+				logger.error("It is out of stock. stock_status="+stock);
+				return false;	
+			}
+//			if(!condition_display){
+//				logger.error("It is sold out. display_status="+display);
+//				return false;
+//			}
+			if(!condition_presale){
+				logger.error("It is pre sale product. pre_sale="+presale);
+				return false;
+			}
+			if(!condition_price){
+				logger.error("It 's price is zero. dd_sale_price="+price);
+				return false;
+			}
+			return true;
+		}	
+	}
+
+}

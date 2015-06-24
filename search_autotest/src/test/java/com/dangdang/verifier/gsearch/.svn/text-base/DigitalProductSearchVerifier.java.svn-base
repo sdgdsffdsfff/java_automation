@@ -1,0 +1,130 @@
+package com.dangdang.verifier.gsearch;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IgSearchVerifier;
+
+public class DigitalProductSearchVerifier implements IgSearchVerifier{
+	
+	@Override
+	public boolean Verifier(ProdIterator iterator, Map<String, String> map, String[] ta){
+		Map<String, String> searchParameters = this.getSearchParamters(iterator, 1);
+		if(searchParameters==null) return true;
+		return doVerifySearch(searchParameters);
+	}
+
+	@Override
+	public Map<String, String> getSearchParamters(ProdIterator iterator, int flag) {
+		while (iterator.hasNext()){      
+			Map<String, String> map = XMLParser.get_book_search_info(iterator.next(), 1);
+			if(!map.get("product_name").toString().equals("")&&!map.get("isbn_search").toString().equals("")
+					&&!map.get("author_name").toString().equals("")&&!map.get("publisher").toString().equals("")){
+				return map;
+			}
+		} 
+		return null;
+	}
+	
+	//st=pub&-cat_paths=98.00.00.00.00.00&um=search_ranking&product_medium=22
+	//&product_name=cd&isbn_search=&author_name=&publisher=
+	public boolean doVerifySearch(Map<String, String> searchParameters){
+		boolean result = true;
+		logger.debug(String.format("  - [CHECK-INFO] gSearch-search's searchParameters: %s", searchParameters));
+		Map<String, String> tm = new HashMap<String, String>();
+		Map<String, String> newmap = new HashMap<String, String>();
+		ProdIterator iterator = null;
+		tm.put("st", "pub");
+		tm.put("um", "search_ranking");
+		tm.put("_new_tpl", "1");//search_ranking必加
+		tm.put("-cat_paths", "98.00.00.00.00.00");
+		tm.put("-product_medium", "22");
+		
+		
+		//只有product name
+		newmap.clear();
+		try {
+			newmap.put("product_name", URLEncoder.encode(searchParameters.get("product_name"), "GBK"));
+		} catch (UnsupportedEncodingException e1) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e1.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+		}
+		newmap.put("isbn_search", "");
+		newmap.put("author_name", "");
+		newmap.put("publisher", "");
+		newmap.putAll(tm);
+		iterator = new ProdIterator(newmap);
+		result = result && SearchVerifier.productNameVerifier(iterator, searchParameters);
+		
+		
+		//只有isbn
+		newmap.clear();
+		newmap.put("product_name", "");
+		newmap.put("isbn_search", searchParameters.get("isbn_search"));
+		newmap.put("author_name", "");
+		newmap.put("publisher", "");
+		newmap.putAll(tm);
+		iterator = new ProdIterator(newmap);
+		result = result && SearchVerifier.isbnVerifier(iterator, searchParameters);
+		
+		
+		//只有author
+		newmap.clear();
+		newmap.put("product_name", "");
+		newmap.put("isbn_search", "");
+		newmap.put("publisher", "");
+		try {
+			newmap.put("author_name", URLEncoder.encode(searchParameters.get("author_name"), "GBK"));
+		} catch (UnsupportedEncodingException e1) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e1.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+		}
+		newmap.putAll(tm);
+		iterator = new ProdIterator(newmap);
+		result = result && SearchVerifier.authorVerifier(iterator, searchParameters);
+		
+		
+		//只有 publisher
+		newmap.clear();
+		newmap.put("product_name", "");
+		newmap.put("isbn_search", "");
+		newmap.put("author_name", "");
+		try {
+			newmap.put("publisher", URLEncoder.encode(searchParameters.get("publisher"), "GBK"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		newmap.putAll(tm);
+		iterator = new ProdIterator(newmap);
+		result = result && SearchVerifier.publisherVerifier(iterator, searchParameters);
+		
+		
+		//综合
+		newmap.clear();		
+		try {
+			newmap.put("isbn_search", searchParameters.get("isbn_search"));
+			newmap.put("author_name", URLEncoder.encode(searchParameters.get("author_name"), "GBK"));
+			newmap.put("publisher", URLEncoder.encode(searchParameters.get("publisher"), "GBK"));
+			newmap.put("product_name", URLEncoder.encode(searchParameters.get("product_name"), "GBK"));
+		} catch (UnsupportedEncodingException e) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+		}
+		newmap.putAll(tm);
+		iterator = new ProdIterator(newmap);
+		result = result && SearchVerifier.bookSearchAllVerifier(iterator, searchParameters);
+		return result;
+	}
+}

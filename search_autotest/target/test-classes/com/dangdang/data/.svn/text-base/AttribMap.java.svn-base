@@ -1,0 +1,28 @@
+package com.dangdang.data;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class AttribMap {
+	private static Map<String, String> attMap = new HashMap<String, String>();
+	private static AttribMap attribmap = null;	
+
+	{
+		attMap.put("texture", "15553:1"); //材质：雪纺
+		attMap.put("type", "15550:1"); //种类:
+		attMap.put("element", "1000172:1");  //元素:
+		attMap.put("style", "1000027:1");  //风格：
+		attMap.put("people", "15560:1");  //人群：
+	}
+	
+	private AttribMap(){
+		
+	}
+	
+	public static Map<String, String> getAttribMap(){	
+		if (attribmap==null){
+			attribmap = new AttribMap();
+		}
+		return attribmap.attMap;	
+	}
+}

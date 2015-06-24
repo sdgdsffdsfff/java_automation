@@ -1,0 +1,267 @@
+package com.dangdang.verifier.verticalSearch;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Node;
+
+import com.dangdang.client.SearchRequester;
+import com.dangdang.client.URLBuilder;
+import com.dangdang.data.VerticalSearchQuery;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IVerticalSearchVerifer;
+
+public class PubVSVerifier implements IVerticalSearchVerifer {
+
+	@Override
+	public boolean verifier(VerticalSearchQuery query) {
+		// TODO Auto-generated method stub
+		Map<String,String> urlMap = URLBuilder.converURLPars("vertical_search", query.getQuery(),null);
+		String url = URLBuilder.buildURL(urlMap);
+		String xml = SearchRequester.get(url);
+		try {
+			Document doc = XMLParser.read(xml);
+			String template_type = XMLParser.templateType(doc);
+			if(template_type.equals("book_name_page")){
+				logger.info(" - [LOG_INSIDE] - "+query.getQuery());
+				//自营节点
+				Node ddsale = XMLParser.templateDDSale(doc);
+				//招商节点
+				Node shopsale = XMLParser.templateShopSale(doc);
+				List<Node> shopsale_products = XMLParser.template_shopsale_products(shopsale);
+				//招商品的数量要>=1
+				if(shopsale_products.size()<1){
+					logger.error(" - [LOG_FAILED] - "+"the shop sale products count less then 1;");
+					return false;
+				}
+				String temp_product_id = XMLParser.product_id(ddsale);
+				String query_product_id = query.getStd_product();
+				//标品要与设置一致
+				if(!temp_product_id.equals(query_product_id)){
+				
+					if(!isMatch(ddsale)){
+						return false;
+					}
+					
+					logger.error(" - [LOG_FAILED] - "+"The standard product id is incorrect!");
+					logger.error("The standard product id in search result:"+temp_product_id);
+					logger.error("The standard product id in query setting:"+query_product_id);
+					return false;
+				}else{
+					//标品是有效的
+					if(!isAvailable(temp_product_id)){
+						logger.error(" - [LOG_FAILED] - "+"The standard product: "+temp_product_id+" showing in result is not available product!");
+						return false;
+					}
+				}
+				
+				String [] shop_products = query.getShop_products().split(",");
+				List<String> q_products = Arrays.asList(shop_products);
+				List<String> query_products = new ArrayList<String>(q_products);
+				//招商品要符合设置
+				for(Node ss_product:shopsale_products){
+					String pid = XMLParser.product_id(ss_product);
+
+					if(!query_products.contains(pid)){
+						logger.error(" - [LOG_FAILED] - "+"The product: "+pid+" showing in result is not contained by the query setting!");
+						logger.error("The query settings :"+ query.getShop_products());
+						return false;
+					}else{
+						
+						if(!isMatchNotDDsell(ss_product)){
+							return false;
+						}
+						
+						
+						query_products.remove(pid);
+					}
+				}
+				
+				//未显示在结果中的招商品应该是不符合要求的
+				if(query_products.size()!=0){
+					for(String pid: query_products){
+						if(isAvailable(pid)){
+							logger.error(" - [LOG_FAILED] - "+"The product: "+pid+" showing in result is not contained by the query setting!");
+							logger.error("The query settings :"+ query.getShop_products());
+							return false;
+						}
+					}
+				}
+				
+				
+				
+			}else{
+				logger.debug(" - [LOG_OUTSIDE] - "+query.getQuery());
+				String query_product_id = query.getStd_product();
+				if(!isAvailable(query_product_id)){
+					logger.debug(" - [LOG_SUCCESS] - "+"The standard product is not available!");
+					return true;
+				}else{
+					String [] shop_products = query.getShop_products().split(",");
+					List<String> query_products = Arrays.asList(shop_products);
+					for(String pid:query_products){
+						if(isAvailable(pid)){
+							logger.error(" - [LOG_FAILED] - "+"There is a shop sale product is available!!");
+							return false;
+						}
+					}
+					logger.debug("- [LOG_SUCCESS] - "+"Query passed");
+					return true;
+				}
+				
+			}
+			
+			
+		} catch (MalformedURLException | DocumentException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			 ByteArrayOutputStream buf = new ByteArrayOutputStream();
+			 e.printStackTrace(new PrintWriter(buf, true));
+			 String expMessage = buf.toString();
+			 logger.error(" - [LOG_EXCEPTION] - "+expMessage);
+			return false;
+		}
+		return true;
+		
+	}
+	
+	
+	
+	
+	
+	public boolean isAvailable(String pid){
+		//切换小搜索查单品
+//		List<Node> nodelist = URLBuilder.porductSearch(pid,true);
+		List<Node> nodelist = URLBuilder.porductSearch_mini(pid,true);
+		if(nodelist.size()==0){
+			return false;
+			
+		}else{
+			Node node = nodelist.get(0);
+			String numImage = XMLParser.product_numImage(node);
+			boolean condition_image = Integer.valueOf(numImage)>=1;
+			String stock = XMLParser.product_StockStatus(node);
+			boolean condition_stock = stock.equals("1");
+			String display = XMLParser.product_displayStatus(node);
+			boolean condition_display = display.equals("0");
+			String presale = XMLParser.product_preSale(node);
+			boolean condition_presale = presale.equals("0");
+			String price = XMLParser.product_dd_sale_price(node);
+			boolean condition_price = !(price.equals("0")|price.equals("0.0")|price.equals("0.00"));
+			if(!condition_image){
+				logger.error("No image for it. numImage="+numImage);
+				return false;
+			}
+			if(!condition_stock){
+				logger.error("It is out of stock. stock_status="+stock);
+				return false;	
+			}
+			if(!condition_display){
+				logger.error("It is sold out. display_status="+display);
+				return false;
+			}
+			if(!condition_presale){
+				logger.error("It is pre sale product. pre_sale="+presale);
+				return false;
+			}
+			if(!condition_price){
+				logger.error("It 's price is zero. dd_sale_price="+price);
+				return false;
+			}
+			return true;
+		}
+		
+		
+		
+	}
+	
+	public boolean isMatch(Node node){
+		String pid = XMLParser.product_id(node);
+		String t_numImage = XMLParser.product_numImage(node);
+		String t_stock = XMLParser.product_StockStatus(node);
+		String t_display = XMLParser.product_displayStatus(node);
+		String t_presale = XMLParser.product_preSale(node);
+		String t_ddprice  = XMLParser.product_dd_sale_price(node);
+		List<Node> nodelist = URLBuilder.porductSearch_mini(pid,true);
+		String v_numImage = XMLParser.product_numImage(nodelist.get(0));
+		String v_stock = XMLParser.product_StockStatus(nodelist.get(0));
+		String v_display = XMLParser.product_displayStatus(nodelist.get(0));
+		String v_presale = XMLParser.product_preSale(nodelist.get(0));
+		String v_ddprice  = XMLParser.product_dd_sale_price(nodelist.get(0));
+		
+		if(!t_numImage.equals(v_numImage)){
+			logger.error(" - [LOG_FAILED] - "+"t_numImage donot match v_numImage:"+t_numImage+"!="+v_numImage);
+			return false;
+		}
+		if(!t_stock.equals(v_stock)){
+			logger.error(" - [LOG_FAILED] - "+"t_stock donot match v_stock:"+t_stock+"!="+v_stock);
+			return false;
+		}
+		if(!t_display.equals(v_display)){
+			logger.error(" - [LOG_FAILED] - "+"t_display donot match v_display:"+t_display+"!="+v_display);
+			return false;
+		}
+		if(!t_presale.equals(v_presale)){
+			logger.error(" - [LOG_FAILED] - "+"t_presale donot match v_presale:"+t_presale+"!="+v_presale);
+			return false;
+		}
+		if(!t_ddprice.equals(v_ddprice)){
+			logger.error(" - [LOG_FAILED] - "+"t_ddprice donot match v_ddprice:"+t_ddprice+"!="+v_ddprice);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	//招商品没有那么多字段展示
+	public boolean isMatchNotDDsell(Node node){
+		String pid = XMLParser.product_id(node);
+//		String t_numImage = XMLParser.product_numImage(node);
+//		String t_stock = XMLParser.product_StockStatus(node);
+//		String t_display = XMLParser.product_displayStatus(node);
+//		String t_presale = XMLParser.product_preSale(node);
+		String t_sale_week = XMLParser.product_sale_week(node);
+		String t_ddprice  = XMLParser.product_dd_sale_price(node);
+		List<Node> nodelist = URLBuilder.porductSearch_mini(pid,true);
+		String v_numImage = XMLParser.product_numImage(nodelist.get(0));
+		String v_stock = XMLParser.product_StockStatus(nodelist.get(0));
+		String v_display = XMLParser.product_displayStatus(nodelist.get(0));
+		String v_presale = XMLParser.product_preSale(nodelist.get(0));
+		String v_ddprice  = XMLParser.product_dd_sale_price(nodelist.get(0));
+		String v_sale_week = XMLParser.product_sale_week(nodelist.get(0));
+		if(!(Integer.valueOf(v_numImage)>=1)){
+			logger.error(" - [LOG_FAILED] - "+"t_numImage donot match v_numImage:"+v_numImage+"<=0");
+			return false;
+		}
+		if(!v_stock.equals("1")){
+			logger.error(" - [LOG_FAILED] - "+"t_stock donot match v_stock:"+v_stock+"!=1");
+			return false;
+		}
+		if(!v_display.equals("0")){
+			logger.error(" - [LOG_FAILED] - "+"t_display donot match v_display:"+v_display+"!=0");
+			return false;
+		}
+		if(!v_presale.equals("0")){
+			logger.error(" - [LOG_FAILED] - "+"t_presale donot match v_presale:"+v_presale+"!=0");
+			return false;
+		}
+		if(!t_ddprice.equals(v_ddprice)){
+			logger.error(" - [LOG_FAILED] - "+"t_ddprice donot match v_ddprice:"+t_ddprice+"!="+v_ddprice);
+			return false;
+		}
+		if(!t_sale_week.equals(v_sale_week)){
+			logger.error(" - [LOG_FAILED] - "+"t_sale_week donot match v_sale_week:"+t_sale_week+"!="+v_sale_week);
+			return false;
+		}
+		
+		return true;
+	}
+
+}

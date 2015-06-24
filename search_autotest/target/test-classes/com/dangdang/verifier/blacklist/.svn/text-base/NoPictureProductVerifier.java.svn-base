@@ -1,0 +1,74 @@
+package com.dangdang.verifier.blacklist;
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.dom4j.Node;
+import org.slf4j.LoggerFactory;
+
+import com.dangdang.client.URLBuilder;
+import com.dangdang.data.FuncQuery;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+
+/**
+ * 对无图片商品策略进行验证
+ * 
+ * @author zhangxiaojing
+ * 
+ */
+public class NoPictureProductVerifier{
+
+	// 日志记录器
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(NoPictureProductVerifier.class);
+	
+	public static boolean doVerify(FuncQuery query) {
+
+		Map<String, String> urlp = URLBuilder.converURLPars("", query.getFquery(),null);
+		logger.debug(" - SearchInfo: " + urlp.toString());
+		ProdIterator iterator = new ProdIterator(urlp,3000);	
+		
+		Map<String,Integer> positionMap = new HashMap<String,Integer>();
+		
+		while(iterator.hasNext()){
+			Node prod = iterator.next();
+			String pid = XMLParser.product_id(prod);
+			//获取商品的文本相关性得分
+			String score = XMLParser.product_score(prod);
+			String relativeScore = Integer.toBinaryString(Integer.parseInt(score));
+			int positon = iterator.getPoint();
+			String numberImages = XMLParser.product_numImage(prod);
+			if(numberImages.equals("0")){
+				//不满31位，高位补零
+				int length = relativeScore.length();
+				if(relativeScore.length()<31){
+					for(int i=0;i<31-length;i++){
+						relativeScore="0"+relativeScore;
+					}
+				}
+				//验证无图片商品的文本相关性得分为0(从高位向低位数4到6位)
+				if(!relativeScore.substring(4,7).equals("000")){
+					logger.error(String.format("query: %s,the relative score of no picture product %s is not 0!", query.getFquery(), pid));
+					return false;
+				}
+				//取第一个无图片商品位置
+				if(positionMap.size()==0){
+					positionMap.put(pid, positon);
+				}
+			}
+		}
+		
+		//计算query无图片商品平均位置
+		double avgPositon = 0;
+		if(positionMap.size()==1&&iterator.getTotalCount()>0){
+			avgPositon = Double.parseDouble(positionMap.get(positionMap.keySet().iterator().next()).toString())/iterator.getTotalCount();
+		}
+		if(positionMap.size()==1&&avgPositon<0.5){//设置阈值
+			logger.error(String.format("query: %s, the average postion of no picture product %s is %s!", query.getFquery(), 
+					positionMap.keySet().iterator().next(),avgPositon));
+			return false;
+		}
+		return true;
+	}
+}

@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter
+END
+StockVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/StockVerifier.java
+END
+FeedbackVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/FeedbackVerifier.java
+END
+AttribVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/AttribVerifier.java
+END
+BrandVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/BrandVerifier.java
+END
+DDSellVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/DDSellVerifier.java
+END
+PriceIntervalVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/PriceIntervalVerifier.java
+END
+M_ExclusivePrice.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/M_ExclusivePrice.java
+END
+PreSaleVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/PreSaleVerifier.java
+END
+PromoVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/PromoVerifier.java
+END
+CategoryVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/CategoryVerifier.java
+END
+ExclusivePrice.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/ExclusivePrice.java
+END
+OutletsVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/filter/OutletsVerifier.java
+END

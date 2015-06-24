@@ -1,0 +1,124 @@
+package com.dangdang.verifier.sort;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Map;
+
+import org.dom4j.Node;
+
+import com.dangdang.data.Product;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.ISortVerifier;
+
+public class PriceDescVerifier implements ISortVerifier {
+
+	@Override
+	public boolean Verifier(ProdIterator iterator, Map<String, String> map) {
+		// 相比当前的商品，上一个商品
+				Product pre_Product = null;
+				Product pre_Product_reco = null;
+				try {
+					//暂时不验总商品数量
+//					int totalCount = iterator.getTotalCount();
+//					int preTotalCount = Integer.valueOf(map.get("totalCount"));
+//					if(!NumVerifier(totalCount, preTotalCount)){
+//						return false;
+//					}
+					// 遍历所有商品节点，比较相邻的2个商品的价格是否按照降序排列
+					while (iterator.hasNext()) {
+						logger.debug("/****************************product**************************/");
+						// 给product节点赋值
+						Node subNode = iterator.next();
+						Product product = new Product();
+						product.setProduct_id(XMLParser.product_id(subNode));
+						product.setDd_sale_price(XMLParser
+								.product_dd_sale_price(subNode));
+						product.setStype(XMLParser.product_stype(subNode));
+						if(product.getStype().equals("")){
+							if (pre_Product == null) {
+								pre_Product = product;
+
+							} else {
+								// 比较前一个商品的价格是不是比后一个商品价格高
+								if (Double.valueOf(pre_Product.getDd_sale_price()) >= Double.valueOf(product.getDd_sale_price())) {
+									pre_Product = product;
+
+								} else {
+									//logger.error("Failed! Previous one is cheaper than current one;");
+									logger.error(" - [PRICEDESC] - "+"pre_product_id:"
+											+ pre_Product.getProduct_id() + ";"
+											+ "sale_price:" + pre_Product.getDd_sale_price());
+									logger.error(" - [PRICEDESC] - "+"product_id:" + product.getProduct_id()
+											+ ";" + "sale_price:" + product.getDd_sale_price());
+									return false;
+
+								}
+							}
+						}else if(product.getStype().equals("reco")){//推荐品排序
+							if (pre_Product_reco == null) {
+								pre_Product_reco = product;
+
+							} else {
+								// 比较前一个商品的价格是不是比后一个商品价格高
+								if (Double.valueOf(pre_Product_reco.getDd_sale_price()) >= Double.valueOf(product.getDd_sale_price())) {
+									pre_Product_reco = product;
+
+								} else {
+									//logger.error("Failed! Previous one is cheaper than current one;");
+									logger.error(" - [PRICEDESC] - "+"pre_product_id:"
+											+ pre_Product_reco.getProduct_id() + ";"
+											+ "sale_price:" + pre_Product_reco.getDd_sale_price());
+									logger.error(" - [PRICEDESC] - "+"product_id:" + product.getProduct_id()
+											+ ";" + "sale_price:" + product.getDd_sale_price());
+									return false;
+
+								}
+							}
+						}
+
+
+						logger.debug("/****************************end**************************/");
+					}
+				} catch (Exception e) {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+					e.printStackTrace(new PrintStream(baos));  
+					String exception = baos.toString();  
+					logger.error(" - [LOG_EXCEPTION] - "+exception);
+				}
+
+				return true;
+
+	}
+
+	@Override
+	public boolean NumVerifier(int Count, int preCount) {
+		//本次结果中商品数量比预查询中的结果数量大
+		if(Count!=preCount){
+			logger.error(" - [PRICEDESC] - "+"The total count different with the total count of the result before it was sorted by price desc!");
+			logger.error(" - [PRICEDESC] - "+"Total Count:"+Count+" Pre Total Count:"+preCount);
+			return false;
+		}else{
+			logger.debug("Correct!");
+			return true;
+		}
+	}
+//	public static void main(String[] args) {
+//		PropertyConfigurator.configure("conf/log4j.properties");
+//		Map<String, String> urlmap = URLBuilder.getMap("price_desc", "连衣裙");
+//		Map<String, String> urlmap2 = URLBuilder.getMap("", "连衣裙");
+//		Map<String, String> argsmap = new HashMap<String, String>();
+//		argsmap.put("price_desc", "1");
+//		argsmap.put("TotalCnt", "39889");
+//		ProdIterator iterator = new ProdIterator(urlmap);
+//		ProdIterator iterator2 = new ProdIterator(urlmap2);
+//		PriceDescVerifier desc = new PriceDescVerifier();
+//		System.out.println(desc.Verifier(iterator, argsmap));
+//}
+
+	@Override
+	public boolean doVerify(ProdIterator iterator, Map<String, String> map) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+}

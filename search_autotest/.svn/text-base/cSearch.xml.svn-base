@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Default suite" parallel="methods" thread-count="1"> 
+  <test name="Default test">  
+    <classes>				
+	<class name="com.dangdang.CbookScheduler">
+		<!--
+		<methods>
+			<include name="clearup"/>
+			<include name="setup"/>
+			<include name="gSearch_book_search"/>
+			<include name="gSearch_book_list"/>
+			<include name="gSearch_book_merge"/>
+		</methods>
+		-->
+	</class>
+    </classes>
+  </test> <!-- Default test -->
+</suite> <!-- Default suite -->

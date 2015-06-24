@@ -1,0 +1,15 @@
+log4j.rootLogger = info,stout,MyFileAppender_catefcast
+
+
+log4j.appender.MyFileAppender_catefcast  =  org.apache.log4j.RollingFileAppender
+#org.apache.log4j.FileAppender
+log4j.appender.MyFileAppender_catefcast.File = logs/catefcast_log4j.txt
+log4j.appender.MyFileAppender_catefcast.MaxFileSize=1000MB
+log4j.appender.MyFileAppender_catefcast.Append = false
+log4j.appender.MyFileAppender_catefcast.MaxBackupIndex=200
+log4j.appender.MyFileAppender_catefcast.layout = org.apache.log4j.PatternLayout
+log4j.appender.MyFileAppender_catefcast.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
+
+log4j.appender.stout=org.apache.log4j.ConsoleAppender
+log4j.appender.stout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stout.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n

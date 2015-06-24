@@ -1,0 +1,110 @@
+package com.dangdang.verifier.season;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Node;
+
+import com.dangdang.client.URLBuilder;
+import com.dangdang.data.FuncQuery;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+
+public class SeasonTimenessVerifier {
+
+
+	public static final String [] SPRING = {"春季","春装","春新款","春秋"};
+	public static final String [] SUMMER = {"夏季","夏装","夏新款","薄款","短款","清凉","半袖"};
+	public static final String [] AUTUMN = {"秋季","秋装","秋新款","春秋"};
+	public static final String [] WINTER = {"冬季","冬装","冬新款","厚款","加厚","保暖"};
+	
+	public static Map<Integer,Integer> verify(FuncQuery fquery){
+		List<String> springList = Arrays.asList(SPRING);
+		List<String> summerList = Arrays.asList(SUMMER);
+		List<String> autumnList = Arrays.asList(AUTUMN);
+		List<String> winterList = Arrays.asList(WINTER);
+		
+		
+		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+		//跳过Query中就包含识别词的
+		if(isContain(springList,fquery.getFquery())||isContain(summerList,fquery.getFquery())||isContain(autumnList,fquery.getFquery())||isContain(winterList,fquery.getFquery())){
+			return result;
+		}
+		//拼接url
+		Map<String,String> urlMap = URLBuilder.converURLPars(fquery.getVerify_point(),fquery.getFquery(),null);
+		//商品迭代器
+		ProdIterator iterator = new ProdIterator(urlMap, 300);
+		
+		//遍历所有搜索结果
+		while(iterator.hasNext()&& iterator.getTotalCount()>300){
+			//获得商品的名称
+			Node node = iterator.next();
+			String product_name = XMLParser.product_name(node);
+			//是否包含春季的识别词
+			if(isContain(springList,product_name)){
+				int key = iterator.getpageIndex()*10+1;
+				int value = getValue(result,key,1);
+				result.put(key, value);
+				//是否包含夏季的识别词
+			}else if(isContain(summerList, product_name)){
+				int key = iterator.getpageIndex()*10+2;
+				int value = getValue(result,key,1);
+				result.put(key, value);
+				
+				//是否包含秋季的识别词
+			}else if(isContain(autumnList, product_name)){
+				int key = iterator.getpageIndex()*10+3;
+				int value = getValue(result,key,1);
+				result.put(key, value);
+				
+				//是否识别冬季的识别词
+			}else if(isContain(winterList, product_name)){
+				int key = iterator.getpageIndex()*10+4;
+				int value = getValue(result,key,1);
+				result.put(key, value);
+			}else{
+				continue;
+			}
+			
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * 检查是商品名称中是否包含识别词
+	 * @param list   识别词列表
+	 * @param productName   商品名称
+	 * @return
+	 */
+	public static boolean isContain(List<String> list,String productName){
+		for(String flag: list){
+			if(productName.contains(flag)){
+				return true;
+			}
+			}
+		return false;
+	}
+	
+	/**
+	 * 得到最终的统计数值.
+	 * @param map   结果记录的map
+	 * @param key    本次的key
+	 * @param value   本次的value
+	 * @return
+	 */
+	public static int getValue(Map<Integer, Integer> map,int key,int value){
+		
+		if(map.containsKey(key)){
+			int tem_val = map.get(key);
+			return tem_val + value;
+		}else{
+			return value;
+		}
+		
+		
+	}
+}

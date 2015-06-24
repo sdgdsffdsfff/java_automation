@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Default suite" thread-count="5" parallel="methods"> 
+  <test name="Default test" >  
+	<classes>	
+	<class name="com.dangdang.EBookScheduler">
+	</class>			
+	<class name="com.dangdang.VSearchScheduler">
+	</class>
+	<class name="com.dangdang.CommonScheduler">
+	</class>
+	<class name="com.dangdang.CategoryStrategyScheduler">
+	</class>
+	<class name="com.dangdang.CategoryDirectBlacklistScheduler">
+	</class>
+	<class name="com.dangdang.CbookScheduler">
+	</class>
+	<class name="com.dangdang.NoUMSeachVerifierScheduler">
+	</class>
+	<class name="com.dangdang.GSearchScheduler">
+	</class>
+	<class name="com.dangdang.SortSearchScheduler">
+	</class>
+	<class name="com.dangdang.FilterSearchScheduler">
+	</class>
+	<class name="com.dangdang.DupliScheduler">
+	</class>	
+	<class name="com.dangdang.BlackListScheduler">
+	</class>
+	<class name="com.dangdang.SearchCustomScheduler">
+	</class>
+	<!-- <class name="com.dangdang.Search_stability">
+	</class> -->
+    </classes>
+  </test> <!-- Default test -->
+</suite> <!-- Default suite -->

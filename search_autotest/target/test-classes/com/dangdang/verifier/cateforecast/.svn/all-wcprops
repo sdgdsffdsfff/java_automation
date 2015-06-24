@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/cateforecast
+END
+CategoryForecastVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/cateforecast/CategoryForecastVerifier.java
+END
+CategoryFeedbackFilterVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/cateforecast/CategoryFeedbackFilterVerifier.java
+END
+CategoryDirectBlacklistVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/cateforecast/CategoryDirectBlacklistVerifier.java
+END

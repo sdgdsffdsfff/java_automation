@@ -1,0 +1,196 @@
+package com.dangdang.verifier.verticalSearch;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.Node;
+
+import com.dangdang.client.SearchRequester;
+import com.dangdang.client.URLBuilder;
+import com.dangdang.data.VerticalSearchQuery;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IVerticalSearchVerifer;
+
+public class ClothVSVerifier implements IVerticalSearchVerifer {
+
+	@Override
+	public boolean verifier(VerticalSearchQuery query) {
+		Map<String,String> urlMap = URLBuilder.converURLPars("vertical_search", query.getQuery().trim(),null);
+		String url = URLBuilder.buildURL(urlMap);
+		String xml = SearchRequester.get(url);
+		try{
+			Document doc = XMLParser.read(xml);
+			String template_type = XMLParser.templateType(doc);
+			//进入垂搜
+			if(template_type.equals("fashion_brand_page")){
+				logger.info(" - [LOG_INSIDE] - "+query.getQuery());
+				String Shop_products = query.getShop_products();
+				if(Shop_products == null){
+					logger.error(" - [LOG_FAILED] - "+"The query "+query.getQuery()+" is not vertical_search query!");
+					return false;
+				}
+				if(Shop_products.equals("")){
+					logger.error(" - [LOG_FAILED] - "+"The query "+query.getQuery()+" is not vertical_search query!");
+					return false;
+				}
+				if(Shop_products.trim().split(",").length<5){
+					logger.error(" - [LOG_FAILED] - "+"The query "+query.getQuery()+" is not vertical_search query!");
+					return false;
+				}
+				
+				String shop_id = XMLParser.templateShopId(doc);
+				//验证shop_id
+				if(!shop_id.equals(query.getShop_id())){
+					logger.error(" - [LOG_FAILED] - "+"The standard shop_id is incorrect!");
+					logger.error("expect shop_id:"+query.getShop_id()+"; actual shop_id:"+shop_id);
+					return false;
+				}
+				
+				List itemList = XMLParser.templateItem(doc);
+				//验证item数量>=5
+				if(itemList.size()<5||itemList.size()>20){
+					logger.error(" - [LOG_FAILED] - "+"The shop "+shop_id+"'s product count is not between 5 and 20!");
+					logger.error("The standard product count in search result:"+itemList.size());
+					return false;
+				}
+				
+				for(Object item:itemList){
+					String product_id = XMLParser.product_id((Node)item);
+					//是预设的商品
+					if(!Shop_products.contains(product_id)){
+						logger.error(" - [LOG_FAILED] - "+"The product "+product_id +" is not in "+Shop_products);
+						return false;
+					}
+					if (!isAvailable(product_id)) {
+						logger.error(" - [LOG_FAILED] - "+"The product "+product_id +" is not Available in"+Shop_products);
+						return false;
+					}
+					
+//					//有图片
+//					if(Integer.parseInt(XMLParser.product_numImage((Node)item))<1){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+product_id +" has no picture!");
+//						return false;
+//					}
+//					//有库存
+//					if(!XMLParser.product_StockStatus((Node)item).trim().equals("1")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+product_id +" has no stock!");
+//						return false;
+//					}
+//					//非预售
+//					if(!XMLParser.product_preSale((Node)item).trim().equals("0")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+product_id +" is presale!");
+//						return false;
+//					}
+//					//有价格
+//					if(XMLParser.product_dd_sale_price((Node)item).trim().equals("")||XMLParser.product_dd_sale_price((Node)item).trim().equals("0")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+product_id +" has no price!");
+//						return false;
+//					}
+//					//未下架
+//					if(!XMLParser.product_displayStatus((Node)item).trim().equals("0")){
+//						logger.error(" - [LOG_FAILED] - "+"The product "+product_id +" is off shelf!");
+//						return false;
+//					}
+				}
+				return true;
+		    //未进入垂搜
+			}else{
+				int num_avaiShopProduct = 0;
+				String [] products = query.getShop_products().split(",");
+				if(products.length<=0){
+					logger.error(" - [LOG_FAILED] - "+"No shop product here！");
+					return false;
+				}
+				List<String> q_products = Arrays.asList(products);
+				List<String> query_products = new ArrayList<String>(q_products);
+				
+				//必填项
+				if(isNullOrEmpty(query.getQuery())||isNullOrEmpty(query.getShop_id())||isNullOrEmpty(query.getBrand_id())
+						||isNullOrEmpty(query.getShop_url())||isNullOrEmpty(query.getShop_products())){
+					logger.debug(" - [LOG_SUCCESS] - "+"The required fields is missing");
+					return true;
+				}
+
+				//如果设置中招商品就少于5个，该设置不生效
+				if(query_products.size()<5){
+					logger.debug(" - [LOG_SUCCESS] - "+"The number of products in query setting is less then 5");
+					logger.debug(" - [LOG_SUCCESS] - "+"products in query setting:"+query.getShop_products());
+					return true;
+				}
+				else{
+					//得到有效的招商品个数
+					for(String fquery:query_products){
+						if(isAvailable(fquery)){
+							num_avaiShopProduct++;
+						}
+					}
+					//如果有效的招商品是5个以上，但是没有进入垂搜
+					if(num_avaiShopProduct>= 5){
+						logger.error(" - [LOG_FAILED] - "+"There are more than 5 shop products！num_avaiShopProduct="+num_avaiShopProduct);
+						return false;
+					}
+				}
+				logger.debug("not vertical_search");
+			}	
+			return true;		
+		}catch(Exception e){
+			logger.error(e.toString());
+			return false;
+		}
+	}
+	
+	private boolean isNullOrEmpty(String str){
+		if(str==null){
+			return true;
+		}
+		if(str.trim().equals("")){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isAvailable(String pid){
+		List<Node> nodelist = URLBuilder.porductSearch(pid.trim(),true);
+		if(nodelist.size()==0){
+			return false;
+			
+		}else{
+			Node node = nodelist.get(0);
+			String numImage = XMLParser.product_numImage(node);
+			boolean condition_image = Integer.valueOf(numImage)>=1;
+			String stock = XMLParser.product_StockStatus(node);
+			boolean condition_stock = stock.equals("1");
+//			String display = XMLParser.product_displayStatus(node);
+//			boolean condition_display = display.equals("0");
+			String presale = XMLParser.product_preSale(node);
+			boolean condition_presale = presale.equals("0");
+			String price = XMLParser.product_dd_sale_price(node);
+			boolean condition_price = !(price.equals("0")|price.equals("0.0")|price.equals("0.00"));
+			if(!condition_image){
+				logger.error("No image for it. numImage="+numImage);
+				return false;
+			}
+			if(!condition_stock){
+				logger.error("It is out of stock. stock_status="+stock);
+				return false;	
+			}
+//			if(!condition_display){
+//				logger.error("It is sold out. display_status="+display);
+//				return false;
+//			}
+			if(!condition_presale){
+				logger.error("It is pre sale product. pre_sale="+presale);
+				return false;
+			}
+			if(!condition_price){
+				logger.error("It 's price is zero. dd_sale_price="+price);
+				return false;
+			}
+			return true;
+		}	
+	}
+
+}

@@ -1,0 +1,148 @@
+package com.dangdang.util;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+/*
+ * 加载读取配置文件
+ */
+public class Config {
+
+	private static final String Config_path = "conf/config.properties";
+	private Properties config = new Properties();
+	public static final String baseURL = "baseURL";
+	public static final String itemsfile = "itemsfile";
+	public static final String failedfile = "failedfile";
+	public static final String successfile = "successfile";
+	public static final String untestfile = "untestfile";
+	public static final String termFixfile = "termFixfile";
+	public static final String fullfixfile = "fullfixfile";
+	public static final String db_URL = "db_url";
+	public static final String db_user = "db_user";
+	public static final String db_pwd = "db_pwd";
+	public static final String QueryAnalysic="QueryAnalysic";
+	public static final String SearchLogFile = "SearchLogFile";
+	public static final String CateForecastSetting = "CateForecastSetting";
+	public static final String isSearchBG= "isSearchBG";
+	public static final String BH_Analysis = "BH_Analysis";
+	public static final String PUB_Analysis = "PUB_Analysis";
+	/*
+	 * 构造类时加载配置文件
+	 */
+	public Config() {
+		try {
+			InputStream in = new FileInputStream(Config_path);
+			config.load(in);
+		} catch (Exception e) {
+
+		}
+
+	}
+	public String get_BHAnaScope(){
+		return config.getProperty(BH_Analysis);
+	}
+	public String get_PUBAnaScope(){
+		return config.getProperty(PUB_Analysis);
+	}
+	public String get_isSearchBG(){
+		return config.getProperty(isSearchBG);
+	}
+	public String get_SymbolSetting(){
+		return config.getProperty(CateForecastSetting);
+	}
+	public String get_SearchLogFile(){
+		return config.getProperty(SearchLogFile);
+	}
+	
+	public String get_AnayURL(){
+		return config.getProperty(QueryAnalysic);
+	}
+	
+	/**
+	 * 得到db url
+	 * 
+	 * @return
+	 */
+	public String get_dbURL() {
+		return config.getProperty(db_URL);
+	}
+	/**
+	 * 得到db user
+	 * 
+	 * @return
+	 */
+	public String get_dbUser() {
+		return config.getProperty(db_user);
+	}
+	/**
+	 * 得到db password
+	 * 
+	 * @return
+	 */
+	public String get_dbPwd() {
+		return config.getProperty(db_pwd);
+	}
+
+	/**
+	 * 得到测试url
+	 * 
+	 * @return
+	 */
+	public String get_baseURL() {
+		return config.getProperty(baseURL);
+	}
+
+	/**
+	 * 得到搜索项文件路径
+	 * 
+	 * @return
+	 */
+	public String get_itemFile() {
+		return config.getProperty(itemsfile);
+	}
+
+	/**
+	 * 得到失败搜索项文件
+	 * 
+	 * @return
+	 */
+	public String get_failedFile() {
+		return config.getProperty(failedfile);
+	}
+
+	/**
+	 * 得到成功搜索项文件
+	 * 
+	 * @return
+	 */
+	public String get_successFile() {
+		return config.getProperty(successfile);
+	}
+
+	/**
+	 * 得到未测试搜索项文件
+	 * 
+	 * @return
+	 */
+	public String get_untestFile() {
+		return config.getProperty(untestfile);
+	}
+
+	/**
+	 * 得到只关键字匹配的关键字文件
+	 * 
+	 * @return
+	 */
+	public String get_termFixFile() {
+		return config.getProperty(termFixfile);
+	}
+
+	/**
+	 * 得到目录名与搜索关键词全匹配的关键字文件
+	 * 
+	 * @return
+	 */
+	public String get_fullFixFile() {
+		return config.getProperty(fullfixfile);
+	}
+}

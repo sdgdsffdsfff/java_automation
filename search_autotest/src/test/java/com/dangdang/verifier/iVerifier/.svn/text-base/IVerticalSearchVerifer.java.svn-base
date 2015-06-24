@@ -1,0 +1,12 @@
+package com.dangdang.verifier.iVerifier;
+
+import org.slf4j.LoggerFactory;
+
+import com.dangdang.data.VerticalSearchQuery;
+
+public interface IVerticalSearchVerifer {
+
+	public final static org.slf4j.Logger logger = LoggerFactory.getLogger(IVerticalSearchVerifer.class);
+
+	boolean verifier(VerticalSearchQuery query);
+}

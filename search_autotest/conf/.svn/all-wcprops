@@ -1,0 +1,173 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/repos/manual_automation/!svn/ver/214/search_team/search_autotest/conf
+END
+filter_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/filter_log4j.properties
+END
+cateandquery_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/cateandquery_log4j.properties
+END
+cate_term.txt
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/cate_term.txt
+END
+sort_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/sort_log4j.properties
+END
+ctr_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/ctr_log4j.properties
+END
+common_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/common_log4j.properties
+END
+Season_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/Season_log4j.properties
+END
+urlbadcase.txt
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/urlbadcase.txt
+END
+vSearch_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/vSearch_log4j.properties
+END
+booktitle_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/repos/manual_automation/!svn/ver/94/search_team/search_autotest/conf/booktitle_log4j.properties
+END
+catefcast_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/catefcast_log4j.properties
+END
+listopt_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/listopt_log4j.properties
+END
+ebook_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/conf/ebook_log4j.properties
+END
+DupliSearch_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/DupliSearch_log4j.properties
+END
+log4j-filter.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/log4j-filter.properties
+END
+stability_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/stability_log4j.properties
+END
+config.properties
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/repos/manual_automation/!svn/ver/214/search_team/search_autotest/conf/config.properties
+END
+cSearch_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/cSearch_log4j.properties
+END
+blacklist_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/blacklist_log4j.properties
+END
+gSearch_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/repos/manual_automation/!svn/ver/109/search_team/search_autotest/conf/gSearch_log4j.properties
+END
+category_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/category_log4j.properties
+END
+log4j-verticalSearch.properties
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/log4j-verticalSearch.properties
+END
+clothbiz_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/clothbiz_log4j.properties
+END
+topAndNoPicture_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/topAndNoPicture_log4j.properties
+END
+log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/repos/manual_automation/!svn/ver/96/search_team/search_autotest/conf/log4j.properties
+END
+testlog4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/testlog4j.properties
+END
+catefeedback_log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/catefeedback_log4j.properties
+END
+position_ctr_20140723.txt
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/conf/position_ctr_20140723.txt
+END

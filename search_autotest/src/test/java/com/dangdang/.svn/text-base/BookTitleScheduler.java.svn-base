@@ -1,0 +1,154 @@
+package com.dangdang;
+/**
+ * @author liuzhipengjs@dangdang.com
+ * @version 暂废弃
+ */
+public class BookTitleScheduler {
+
+//	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(BookTitleScheduler.class);
+//
+//	private static int count = 0;
+//	private static double sum = 0.0;
+//	{
+//		PropertyConfigurator.configure("conf/booktitle_log4j.properties");
+//	}
+//
+//	@BeforeClass
+//	public void setup() {
+//	}
+//
+//	@AfterClass
+//	public void clearup() {
+//		logger.info(" - [LOG_RESULT] - " + "算数平均点击位置变化为：" + sum / count);
+//		logger.info("*******************************************************");
+//		int pre_p0 = 0;
+//		int pre_p1 = 0;
+//		int pre_p2 = 0;
+//		int pre_p3 = 0;
+//		double pre_pSum = 0;
+//
+//		int act_p0 = 0;
+//		int act_p1 = 0;
+//		int act_p2 = 0;
+//		int act_p3 = 0;
+//		double act_pSum = 0;
+//		DefaultPieDataset pre_ds = new DefaultPieDataset();
+//		DefaultPieDataset act_ds = new DefaultPieDataset();
+//		for (Map.Entry<Integer, Integer> entry : ClickPositionAnalysis.preResult.entrySet()) {
+//			switch (entry.getKey()) {
+//			case 0:
+//				pre_p0 = entry.getValue();
+//				pre_ds.setValue("0~4位置", pre_p0);
+//				break;
+//			case 1:
+//				pre_p1 = entry.getValue();
+//				pre_ds.setValue("4~12位置", pre_p1);
+//				break;
+//			case 2:
+//				pre_p2 = entry.getValue();
+//				pre_ds.setValue("12~60位置", pre_p2);
+//				break;
+//			case 3:
+//				pre_p3 = entry.getValue();
+//				pre_ds.setValue("60~位置", pre_p3);
+//				break;
+//			}
+//		}
+//		pre_pSum = pre_p0 + pre_p1 + pre_p2 + pre_p3;
+//
+//		for (Map.Entry<Integer, Integer> entry : ClickPositionAnalysis.actResult.entrySet()) {
+//			switch (entry.getKey()) {
+//			case 0:
+//				act_p0 = entry.getValue();
+//				act_ds.setValue("0~4位置", act_p0);
+//				break;
+//			case 1:
+//				act_p1 = entry.getValue();
+//				act_ds.setValue("4~12位置", act_p1);
+//				break;
+//			case 2:
+//				act_p2 = entry.getValue();
+//				act_ds.setValue("12~60位置", act_p2);
+//				break;
+//			case 3:
+//				act_p3 = entry.getValue();
+//				act_ds.setValue("60~位置", act_p3);
+//				break;
+//			}
+//		}
+//		act_pSum = act_p0 + act_p1 + act_p2 + act_p3;
+//		logger.info("*	旧版本位置0～4:   " + pre_p0 / pre_pSum * 100 + "%	*	新版本位置0～4:   " + act_p0 / act_pSum * 100 + "%	*");
+//		logger.info("*	旧版本位置4～12:   " + pre_p1 / pre_pSum * 100 + "%	*	新版本位置4～12:   " + act_p1 / act_pSum * 100 + "%	*");
+//		logger.info("*	旧版本位置12～60:   " + pre_p2 / pre_pSum * 100 + "%	*	新版本位置12～60:   " + act_p2 / act_pSum * 100 + "%	*");
+//		logger.info("*	旧版本位置60～:   " + pre_p3 / pre_pSum * 100 + "%	*	新版本位置60～:   " + act_p3 / act_pSum * 100 + "%	*");
+//		logger.info("*******************************************************");
+//
+//		JFreeChart prePieChart = createPieChart(pre_ds, "当当网 真实原版点击位置分布图");
+//		prePieChart.setBackgroundPaint(Color.white);
+//
+//		JFreeChart actPieChart = createPieChart(act_ds, "当当网 预测新版点击位置分布图");
+//		actPieChart.setBackgroundPaint(Color.white);
+//		Date d = new Date();
+//		File pre_file = new File("D:/image/pre_pie_" + d.getTime() + ".png");
+//		File act_file = new File("D:/image/act_pie_" + d.getTime() + ".png");
+//		try {
+//			ImageIO.write(prePieChart.createBufferedImage(300, 300), "png", pre_file);
+//			ImageIO.write(actPieChart.createBufferedImage(300, 300), "png", act_file);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	// 图书标题提取
+//	@Test(enabled = false)
+//	public void BookTitleVerifier() {
+//		try {
+//			Connection conn = DBConnUtil.getConnection();
+//			String strQuery = "SELECT * FROM Search_log_sample  GROUP BY `Query` limit 1,1000 ;";
+//			ResultSet result = DBConnUtil.exeQuery(strQuery, conn);
+//
+//			while (result.next()) {
+//				String query = result.getString("Query");
+//				sum = sum + ClickPositionAnalysis.Verify(query);
+//				count++;
+//
+//			}
+//
+//		} catch (Exception e) {
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			e.printStackTrace(new PrintStream(baos));
+//			String exception = baos.toString();
+//			logger.error(" - [LOG_EXCEPTION] - " + exception);
+//			e.printStackTrace();
+//		} finally {
+//		}
+//	}
+//
+//	public static JFreeChart createPieChart(DefaultPieDataset ds, String title) {
+//
+//		StandardChartTheme mChartTheme = new StandardChartTheme("CN");
+//		mChartTheme.setExtraLargeFont(new Font("黑体", Font.BOLD, 20));
+//		// 设置轴向字体
+//		mChartTheme.setLargeFont(new Font("宋体", Font.CENTER_BASELINE, 15));
+//		// 设置图例字体
+//		mChartTheme.setRegularFont(new Font("宋体", Font.CENTER_BASELINE, 15));
+//		ChartFactory.setChartTheme(mChartTheme);
+//		// 通过工程创建3D饼图
+//		JFreeChart pieChart = ChartFactory.createPieChart3D(title, ds, true, true, false);
+//		pieChart.getRenderingHints().put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+//		// 得到3D饼图的plot对象
+//		PiePlot3D piePlot = (PiePlot3D) pieChart.getPlot();
+//		// 设置旋转角度
+//		piePlot.setStartAngle(290);
+//		// 设置旋转方向
+//		piePlot.setDirection(Rotation.CLOCKWISE);
+//		// 设置透明度
+//		piePlot.setForegroundAlpha(0.5f);
+//		piePlot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} {2}", NumberFormat.getNumberInstance(), new DecimalFormat("0.00%")));
+//		piePlot.setLabelFont((new Font("宋体", Font.PLAIN, 12)));
+//		return pieChart;
+//
+//	}
+
+}

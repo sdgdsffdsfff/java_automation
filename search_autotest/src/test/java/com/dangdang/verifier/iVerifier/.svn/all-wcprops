@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/iVerifier
+END
+IgSearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/iVerifier/IgSearchVerifier.java
+END
+M_IFilterVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/iVerifier/M_IFilterVerifier.java
+END
+IFilterVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/iVerifier/IFilterVerifier.java
+END
+IVerticalSearchVerifer.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/iVerifier/IVerticalSearchVerifer.java
+END
+ISortVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/iVerifier/ISortVerifier.java
+END

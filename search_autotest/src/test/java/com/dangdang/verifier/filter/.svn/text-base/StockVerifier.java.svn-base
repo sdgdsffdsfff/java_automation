@@ -1,0 +1,65 @@
+package com.dangdang.verifier.filter;
+
+import java.util.Map;
+
+import org.dom4j.Node;
+
+import com.dangdang.data.Product;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IFilterVerifier;
+
+public class StockVerifier extends IFilterVerifier {
+
+	@Override
+	public boolean doVerify(ProdIterator iterator, Map<String, String> map, boolean hasResult) {
+		if(!iterator.hasNext()){
+			iterator.reSet();
+		}
+		while(iterator.hasNext()){
+			Node node = iterator.next();
+			if(!canStock(node, hasResult)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean canStock(Node node ,boolean hasResult){
+		Product product = new Product();
+		// 对product赋值
+		product.setProduct_id(XMLParser.product_id(node));
+		product.setStock_status(XMLParser.product_StockStatus(node));
+		product.setIs_publication(XMLParser.product_isPublication(node));
+		product.setProduct_medium(XMLParser.product_medium(node));
+		if(hasResult && isSoldOut(product.getIs_publication(),product.getProduct_medium(),product.getStock_status())){
+			logger.error(" - [STOCK] - "+product.getProduct_id()
+					+ ": The product is sold out. sold_out="
+					+ product.getIs_sold_out() + "; stock_status="
+					+ product.getStock_status());
+			return false;
+			
+		}else if(!hasResult && !isSoldOut(product.getIs_publication(),product.getProduct_medium(),product.getStock_status())){
+			logger.error(" - [STOCK-NORESULT] - "+product.getProduct_id()
+					+ ": The product is not sold out." + "; stock_status="
+					+ product.getStock_status());
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean isSoldOut(String isPublcation,String productMedium,String stockStatus){
+		// 是否售罄&是否可销售
+				if (!stockStatus.equals("0")) {
+					return false;
+				}
+				else {
+					//是否电子书
+					if(isPublcation.equals("1")&&productMedium.equals("22")){
+						return false;
+					}else{
+						return true;
+					}
+				}
+	}
+}

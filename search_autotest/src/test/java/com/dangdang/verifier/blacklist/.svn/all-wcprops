@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repos/manual_automation/!svn/ver/130/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist
+END
+SearchThroughVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist/SearchThroughVerifier.java
+END
+BrandThroughVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repos/manual_automation/!svn/ver/130/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist/BrandThroughVerifier.java
+END
+SearchRankingBlackListVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist/SearchRankingBlackListVerifier.java
+END
+NoPictureProductVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist/NoPictureProductVerifier.java
+END
+ShopThroughVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist/ShopThroughVerifier.java
+END
+TopProductBlackListVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist/TopProductBlackListVerifier.java
+END
+ListRankingBlackListVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/blacklist/ListRankingBlackListVerifier.java
+END

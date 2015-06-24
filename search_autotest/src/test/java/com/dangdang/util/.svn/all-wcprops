@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/repos/manual_automation/!svn/ver/236/search_team/search_autotest/src/test/java/com/dangdang/util
+END
+ChineseConvertor.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/util/ChineseConvertor.java
+END
+Utils.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/repos/manual_automation/!svn/ver/236/search_team/search_autotest/src/test/java/com/dangdang/util/Utils.java
+END
+DBConnUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/util/DBConnUtil.java
+END
+HTMLParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/util/HTMLParser.java
+END
+AssertTools.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/repos/manual_automation/!svn/ver/168/search_team/search_autotest/src/test/java/com/dangdang/util/AssertTools.java
+END
+Config.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/util/Config.java
+END
+SendMail.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/util/SendMail.java
+END
+FileUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/util/FileUtil.java
+END
+XMLParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/repos/manual_automation/!svn/ver/232/search_team/search_autotest/src/test/java/com/dangdang/util/XMLParser.java
+END
+ProdIterator.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/repos/manual_automation/!svn/ver/232/search_team/search_autotest/src/test/java/com/dangdang/util/ProdIterator.java
+END

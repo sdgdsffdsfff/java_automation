@@ -1,0 +1,16 @@
+log4j.rootLogger = info,stout,MyFileAppender_ebook
+
+
+log4j.appender.MyFileAppender_ebook  =  org.apache.log4j.DailyRollingFileAppender
+#org.apache.log4j.FileAppender
+log4j.appender.MyFileAppender_ebook.File = logs/ebook_log
+log4j.appender.MyFileAppender_ebook.DatePattern=yyyy-MM-dd-HH'.txt'
+log4j.appender.MyFileAppender_ebook.MaxFileSize=1000MB
+log4j.appender.MyFileAppender_ebook.Append = false
+log4j.appender.MyFileAppender_ebook.MaxBackupIndex=200
+log4j.appender.MyFileAppender_ebook.layout = org.apache.log4j.PatternLayout
+log4j.appender.MyFileAppender_ebook.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
+
+log4j.appender.stout=org.apache.log4j.ConsoleAppender
+log4j.appender.stout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stout.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n

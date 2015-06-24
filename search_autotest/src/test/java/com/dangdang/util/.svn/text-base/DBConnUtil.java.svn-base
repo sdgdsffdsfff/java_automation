@@ -1,0 +1,116 @@
+package com.dangdang.util;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import org.slf4j.LoggerFactory;
+
+import com.dangdang.client.DBAction;
+import com.mysql.jdbc.ResultSet;
+import com.mysql.jdbc.Statement;
+/*
+ * 工具类，DBA的链接以及执行语句
+ */
+public class DBConnUtil {
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(DBConnUtil.class);
+	
+	public static Config config = new Config();
+	public static  String db_URL = config.get_dbURL();
+//	public static Logger logger = Logger.getLogger(DBConnUtil.class);
+//	public static Logger logger = LogUtil.findLogger(Thread.currentThread().getName());
+	public static String db_user = config.get_dbUser();
+	public static String db_pwd = config.get_dbPwd();
+	
+	public	static Connection getConnection()
+	{
+		logger.debug("- [DBConnUtil] - try to connect with DB;");
+		try {
+			Driver driver = (Driver) Class.forName("com.mysql.jdbc.Driver").newInstance();
+			DriverManager.registerDriver(driver);
+			Connection conn =  DriverManager.getConnection(db_URL, db_user,db_pwd); 
+			logger.debug("- [DBConnUtil] - Success to connect with DB;");
+			return conn;
+		} catch (Exception e) {
+			logger.error(" [DBConnUtil] - Failed to connect with db;");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+			return null;
+		}	
+	}
+	public	static Connection getConnection(String dburl)
+	{
+		logger.debug("- [DBConnUtil] - try to connect with DB;");
+		try {
+			Driver driver = (Driver) Class.forName("com.mysql.jdbc.Driver").newInstance();
+			DriverManager.registerDriver(driver);
+			Connection conn =  DriverManager.getConnection(dburl, db_user,db_pwd); 
+			logger.debug("- [DBConnUtil] - Success to connect with DB;");
+			return conn;
+		} catch (Exception e) {
+			logger.error(" [DBConnUtil] - Failed to connect with db;");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+			return null;
+		}	
+	}
+	public static void closeConnection(Connection conn){
+		try{
+			conn.close();
+			logger.error(" - [DBConnUtil] - Close the DB connection;");
+		}catch(Exception e){
+			logger.error(" - [DBConnUtil] - Failed to close the db connection;");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+		}
+	}
+	
+	public static ResultSet exeQuery(String query,Connection conn){
+		
+//		Connection conn = getConnection();
+		ResultSet result;
+		try {
+			logger.debug("- [DBConnUtil] - execute the query: "+query);
+			Statement statement = (Statement) conn.createStatement();
+			result = (ResultSet) statement.executeQuery(query);
+			return result;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			logger.error("- [DBConnUtil] - execute the query failed: ");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+			return null;
+		}
+		
+	}
+	
+	public static boolean exeUpdate(String query, Connection conn){
+		Statement statement;
+		try {
+			logger.debug("- [DBConnUtil] - execute the query: "+query);
+			statement = (Statement) conn.createStatement();
+			statement.executeUpdate(query);
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			logger.error("- [DBConnUtil] - execute the query failed: ");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+			return false;
+		}
+	}	
+	
+}

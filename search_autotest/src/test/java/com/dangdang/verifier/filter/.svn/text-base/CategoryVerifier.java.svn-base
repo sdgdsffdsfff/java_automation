@@ -1,0 +1,78 @@
+package com.dangdang.verifier.filter;
+
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Node;
+import com.dangdang.client.URLBuilder;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IFilterVerifier;
+
+public class CategoryVerifier extends IFilterVerifier  {
+
+	@Override
+	public boolean doVerify(ProdIterator iterator, Map<String, String> map, boolean hasResult) {
+		String eBrand = map.get("category");
+		if(!iterator.hasNext()){
+			iterator.reSet();
+		}
+		while(iterator.hasNext()){
+			Node prod = iterator.next();
+			if(!isCategory(prod, hasResult, map, eBrand)){
+				return false;
+			}
+		}
+		logger.debug(String.format(" -  [CHECK-PASS-INFO] check pass for 【catpaths】 filte : %s", eBrand));
+		return true;
+	}
+
+	public boolean isCategory(Node prod,boolean hasResult,Map<String,String> map,String eBrand){
+		logger.debug("/****************************product**************************/");
+		String pid = XMLParser.product_id(prod);
+		String catpaths = XMLParser.product_catelogPath(prod);
+		logger.debug("/****************************end**************************/");
+		if (hasResult && !catpaths.contains(eBrand)){
+			if (!isMoreCatgory(pid, catpaths)){
+				logger.error(String.format(" -  [CHECK-FAIL-INFO] %s : actual: %s; expect: %s", pid, catpaths, eBrand));
+				return false;
+			}
+		}else if (!hasResult && catpaths.contains(eBrand)){
+			logger.error(String.format(" -  [CHECK-NO-RESULT] %s : actual: %s; expect: %s", pid, catpaths, eBrand));
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean isMoreCatgory(String pid, String catpaths){
+		
+		List<Node> list =URLBuilder.porductSearch(pid,false);
+		if(list.size()==0){
+			return false;
+		}else{
+			Node product = list.get(0);
+			String cat_paths = XMLParser.product_catelogPath(product);
+			if(cat_paths.contains(catpaths)){
+				return true;
+			}else{
+				logger.error(String.format(" -  [CHECK-WARN-INFO] %s : Mulit-Catgory actual: %s; expect: %s", pid, catpaths, cat_paths));
+				return false;
+			}
+		}
+//		DBAction dba = new DBAction();
+//		dba.setCatCondition("pid="+pid);
+//		List<PidCatPaths> pidcatpaths = dba.getCatpathsByPid();
+//		if(pidcatpaths.size()>0){
+//			PidCatPaths pcatch = pidcatpaths.get(0);
+//			if (pcatch.getCatPaths().contains(catpaths)){
+//				return true;
+//			}else{
+//				logger.error(String.format(" -  [CHECK-WARN-INFO] %s : Mulit-Catgory actual: %s; expect: %s", pid, catpaths, pcatch.getCatPaths()));
+//				return false;
+//			}
+//		}
+//		logger.error(String.format(" -  [CHECK-WARN-INFO] %s : NOT Mulit-Catgory Product", pid));
+//		return false;
+	}
+	
+}

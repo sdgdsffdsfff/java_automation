@@ -1,0 +1,114 @@
+package com.dangdang.verifier.childbookpi;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Node;
+import org.slf4j.LoggerFactory;
+
+import com.dangdang.client.SearchRequester;
+import com.dangdang.client.URLBuilder;
+import com.dangdang.data.FuncQuery;
+import com.dangdang.util.DBConnUtil;
+import com.dangdang.util.XMLParser;
+import com.mysql.jdbc.ResultSet;
+
+public class ChildBookPriceIntervalVerifier{
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(ChildBookPriceIntervalVerifier.class);
+	public static boolean doVerify(FuncQuery query) {
+		
+		String str_query = query.getFquery();
+		if(str_query.equals("")){
+			return true;
+		}
+		String str_catpath = query.getCat_path();
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("q", str_query);
+		map.put("st", "full");
+		map.put("um", "search_ranking");
+		map.put("_new_tpl", "1");//search_ranking必加
+		map.put("cat_paths", str_catpath);
+		String url = URLBuilder.buildUrl(map);
+		String xml = SearchRequester.get(url);
+		try {
+			Document doc = XMLParser.read(xml);
+			if (XMLParser.totalCount(doc).equals("0")) {
+				logger.info(" - [LOG_NO_RESULT] - "+"This query NO RESULT!");
+				return true;
+			}
+			Node node =XMLParser.PriceInterval(doc);
+			List<Node> list = node.selectNodes("items/item");
+			String pi  = get_pi(str_catpath);
+			List<Integer> list_pi = piArray(pi);
+			for(int i =0;i<list.size();i++){
+				Node item_min = (Node)list.get(i).selectNodes("Min").get(0);
+				Node item_max = (Node)list.get(i).selectNodes("Max").get(0);
+				int  min = Integer.valueOf(item_min.getStringValue());
+				int  max = Integer.valueOf(item_max.getStringValue());
+				int set_min = list_pi.get(2*i)*100;
+				int set_max = list_pi.get(2*i+1)*100;
+				 if(set_min== min && set_max==max){
+					 return true;
+				 }else{
+					 logger.error(" - [LOG_FAILED] - "+"Price Interval is incorrect!");
+					 logger.error(min+"!="+set_min+";"+max+"!="+set_max);
+					 return false;
+				 }
+			}
+			
+		} catch (MalformedURLException | DocumentException e) {
+			 ByteArrayOutputStream buf = new ByteArrayOutputStream();
+			 e.printStackTrace(new PrintWriter(buf, true));
+			 String expMessage = buf.toString();
+			 logger.error(" - [LOG_EXCEPTION] - "+expMessage);
+			 return false;
+		}
+		
+		
+		return false;
+	}
+	
+	public static String get_pi(String cat_path){
+		ResultSet result = DBConnUtil.exeQuery("select * from pi_setting where cat_path= '"+cat_path+"'", DBConnUtil.getConnection());
+		try {
+			result.next();
+			String pi = result.getString("PriceInterval");
+			return pi;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public static List<Integer> piArray(String pi){
+		String [] pi_items = pi.split("-");
+		List<Integer> list = new ArrayList<Integer>();
+		for(String s : pi_items){
+			if(!s.equals("0")){
+			list.add(Integer.valueOf(s));
+			list.add(Integer.valueOf(s));
+			}
+		}
+		list.add(0);
+		Collections.sort(list);
+		list.add(0);
+		return list;
+		}
+	
+}

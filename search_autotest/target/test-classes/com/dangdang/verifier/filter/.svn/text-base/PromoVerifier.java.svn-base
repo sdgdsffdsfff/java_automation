@@ -1,0 +1,101 @@
+package com.dangdang.verifier.filter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+import org.dom4j.Node;
+
+import com.dangdang.data.Product;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IFilterVerifier;
+
+public class PromoVerifier extends IFilterVerifier {
+
+	@Override
+	public boolean doVerify(ProdIterator iterator, Map<String, String> map, boolean hasResult) {
+		Date now = new Date();
+		SimpleDateFormat format = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm:ss");
+		if(!iterator.hasNext()){
+			iterator.reSet();
+		}
+		while(iterator.hasNext()){
+			Node node = iterator.next();
+			if(!isPromo(node, hasResult, format, now)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	public boolean isPromo(Node node,boolean hasResult,SimpleDateFormat format,Date now){
+
+
+		Product product = new Product();
+		product.setProduct_id(XMLParser.product_id(node));
+		product.setPrmotion_id(XMLParser.product_promotion_id(node));
+		product.setPromo_end_time(XMLParser
+				.product_promo_end_date(node));
+		product.setPromo_start_time(XMLParser
+				.product_promo_start_date(node));
+		product.setMuti_promo_type(XMLParser
+				.product_muti_promo_type(node));
+		product.setMuti_promo_start_time(XMLParser
+				.product_muti_promo_start_date(node));
+		product.setMuti_promo_end_time(XMLParser
+				.product_muti_promo_end_date(node));
+		product.setCollection_promo_id(XMLParser.product_collection_promo_id(node));
+		product.setCat_promo_start_date(XMLParser.product_cat_promo_start_date(node));
+		product.setCat_promo_end_date(XMLParser.product_cat_promo_end_date(node));
+		try {
+			if(hasResult && !(isAvailable(product.getPrmotion_id(),product.getPromo_start_time(),product.getPromo_end_time(),format,now)
+					|| isAvailable(product.getMuti_promo_type(), product.getMuti_promo_start_time(), product.getMuti_promo_end_time(), format, now)
+					|| isAvailable(product.getCollection_promo_id(), product.getCat_promo_start_date(), product.getCat_promo_end_date(), format, now))){
+				logger.error(" - [PROMOTION] - "+"No promotion is setting on it. Product id="+product.getProduct_id());
+				return false;
+			}else if(!hasResult && (isAvailable(product.getPrmotion_id(),product.getPromo_start_time(),product.getPromo_end_time(),format,now)
+					|| isAvailable(product.getMuti_promo_type(), product.getMuti_promo_start_time(), product.getMuti_promo_end_time(), format, now)
+					|| isAvailable(product.getCollection_promo_id(), product.getCat_promo_start_date(), product.getCat_promo_end_date(), format, now))){
+				logger.error(" - [PROMOTION-NORESULT] - "+"Promotion is setting on it. Product id="+product.getProduct_id());
+				return false;
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			logger.error("- [EXCEPTION] - "+e.getMessage());
+			return false;
+		}
+		return true;
+	
+	}
+	
+	public boolean isAvailable(String id,String startDate,String endDate,SimpleDateFormat format,Date now) throws ParseException{
+		if (id.equals("0")) {
+			logger.debug(" - [PROMOTION] - "+"Promotion id =0!");
+			return false;
+		}else{
+			// 得到促销的开始结束时间
+			Date promo_start = format.parse(startDate);
+			Date promo_end = format.parse(endDate);
+
+			// 判断设置的促销是否还有效
+			return !isOutDate(promo_start,promo_end);
+			
+		} 
+	}
+	public boolean isOutDate(Date start,Date end){
+		Date now = new Date();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
+		if (now.before(end) && now.after(start)) {
+		logger.debug("- [PROMOTION] - "+"Promotion is available!");
+		return false;
+		} else {
+			logger.debug(" - [PROMOTION] - "+"start:"+sdf.format(start)+"end:"+sdf.format(end));
+			logger.debug(" - [PROMOTION] - "+"Promotion is out date！");
+			return true;
+		}
+	}
+}

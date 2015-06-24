@@ -1,0 +1,141 @@
+package com.dangdang.verifier.analysis;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Node;
+
+
+import org.slf4j.LoggerFactory;
+
+import com.dangdang.data.FuncQuery;
+import com.dangdang.util.DBConnUtil;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+
+public class CTR_SaleWeekAnalysis {
+
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CTR_SaleWeekAnalysis.class);
+
+	/**
+	 * 分析位置ctr
+	 * @param query
+	 * @return
+	 */
+	public static List<Map<Integer, Double>> verify(FuncQuery query) {
+		Connection conn = DBConnUtil.getConnection();
+		//保存销售量/销售额统计结果的列表
+		List<Map<Integer, Double>> result = new ArrayList<Map<Integer, Double>>();
+		//统计销售量的map
+		Map<Integer, Double> result_ws = new HashMap<Integer, Double>();
+		//统计销售额的map
+		Map<Integer, Double> result_wsa = new HashMap<Integer, Double>();
+		//当前的query
+		String str_query = query.getFquery();
+		if (query.equals("")) {
+			return null;
+		}
+		
+		//拼接url的参数
+		Map<String, String> urlMap = new HashMap<String, String>();
+		urlMap.put("st", "full");
+		urlMap.put("um", "search_ranking");
+		urlMap.put("_new_tpl", "1");//search_ranking必加
+		try {
+			urlMap.put("q", URLEncoder.encode(str_query, "GBK"));
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		//迭代商品
+		ProdIterator iterator = new ProdIterator(urlMap, 59);
+		while (iterator.hasNext() && iterator.getTotalCount() >= 60) {
+			try {
+				Node node = iterator.next();
+				String week_sale = XMLParser.product_sale_week(node);
+				double iWeekSale = Double.valueOf(week_sale);
+				String week_sale_amt = XMLParser.product_sale_week_amt(node);
+				double iWeekSaleAmt = Double.valueOf(week_sale_amt);
+				//得到位置/pv/点击的关系
+				ResultSet rs = DBConnUtil.exeQuery("SELECT * FROM ctr_info WHERE position='" + iterator.getPoint() + "'", conn);
+				rs.next();
+				String uv = rs.getString("uv");
+				double ipv = uv == null ? 1 : Double.valueOf(uv);
+				String cc = rs.getString("cc");
+				double icc = cc == null ? 1 : Double.valueOf(cc);
+				double pos_ctr =icc / ipv;
+				
+				//位置小于5的在此统计
+				if (iterator.getPoint() <= 4) {
+					if (result_ws.containsKey(0)) {
+						result_ws.put(0, result_ws.get(0) + (iWeekSale *pos_ctr));
+					} else {
+
+						result_ws.put(0, iWeekSale * pos_ctr);
+					}
+					if (result_wsa.containsKey(0)) {
+						result_wsa.put(0, result_wsa.get(0) + (iWeekSaleAmt *pos_ctr));
+					} else {
+						result_wsa.put(0, iWeekSaleAmt *pos_ctr);
+					}
+				}
+				//位置小于10的在此统计
+				if (iterator.getPoint() <= 9) {
+					if (result_ws.containsKey(1)) {
+						result_ws.put(1, result_ws.get(1) + (iWeekSale * pos_ctr));
+					} else {
+						result_ws.put(1, iWeekSale * pos_ctr);
+					}
+					if (result_wsa.containsKey(1)) {
+						result_wsa.put(1, result_wsa.get(1) + (iWeekSaleAmt * pos_ctr));
+					} else {
+						result_wsa.put(1, iWeekSaleAmt * pos_ctr);
+					}
+				}
+				//位置小于30的在此统计
+				if (iterator.getPoint() <= 29) {
+					if (result_ws.containsKey(2)) {
+						result_ws.put(2, result_ws.get(2) + (iWeekSale * pos_ctr));
+					} else {
+						result_ws.put(2, iWeekSale * pos_ctr);
+					}
+					if (result_wsa.containsKey(2)) {
+						result_wsa.put(2, result_wsa.get(2) + (iWeekSaleAmt * pos_ctr));
+					} else {
+						result_wsa.put(2, iWeekSaleAmt * pos_ctr);
+					}
+				}
+				//位置小于60的在此统计
+				if (iterator.getPoint() <= 59) {
+					if (result_ws.containsKey(3)) {
+						result_ws.put(3, result_ws.get(3) + (iWeekSale * pos_ctr));
+					} else {
+						result_ws.put(3, iWeekSale * pos_ctr);
+					}
+					if (result_wsa.containsKey(3)) {
+						result_wsa.put(3, result_wsa.get(3) + (iWeekSaleAmt * pos_ctr));
+					} else {
+						result_wsa.put(3, iWeekSaleAmt * pos_ctr);
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+		}
+		result.add(result_ws);
+		logger.debug("- [LOG_SINGLEQUERY] - "+"Query:"+str_query+"            Week Sale Map:"+result_ws.toString());
+		result.add(result_wsa);
+		logger.debug("- [LOG_SINGLEQUERY] - "+"Query:"+str_query+"            Week Sale Map:"+result_wsa.toString());
+		return result;
+	}
+
+}

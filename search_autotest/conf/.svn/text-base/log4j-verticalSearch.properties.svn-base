@@ -1,0 +1,29 @@
+log4j.rootLogger = error,stout,MyERRORAppender,MyFileAppender
+
+log4j.appender.MyFileAppender  =  org.apache.log4j.RollingFileAppender
+#org.apache.log4j.FileAppender
+log4j.appender.MyFileAppender.File = logs-vs/log.txt
+log4j.appender.MyFileAppender.MaxFileSize=10MB
+log4j.appender.MyFileAppender.Threshold=INFO
+log4j.appender.MyFileAppender.Append = false
+log4j.appender.MyFileAppender.MaxBackupIndex=200
+log4j.appender.MyFileAppender.layout = org.apache.log4j.PatternLayout
+log4j.appender.MyFileAppender.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
+
+
+
+log4j.appender.MyERRORAppender  =  org.apache.log4j.RollingFileAppender
+log4j.appender.MyERRORAppender.File = logs/logError.txt
+log4j.appender.MyERRORAppender.MaxFileSize=10MB
+log4j.appender.MyERRORAppender.Threshold=ERROR
+log4j.appender.MyERRORAppender.Append = false
+log4j.appender.MyERRORAppender.MaxBackupIndex=200
+log4j.appender.MyERRORAppender.layout = org.apache.log4j.PatternLayout
+log4j.appender.MyERRORAppender.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
+
+
+log4j.appender.stout=org.apache.log4j.ConsoleAppender
+log4j.appender.stout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stout.Threshold=INFO
+log4j.appender.stout.Target=System.out
+log4j.appender.stout.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n

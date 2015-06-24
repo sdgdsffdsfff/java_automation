@@ -1,0 +1,52 @@
+package com.dangdang.verifier.filter;
+
+import java.util.Map;
+
+import org.dom4j.Node;
+
+import com.dangdang.data.Product;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IFilterVerifier;
+
+public class PreSaleVerifier extends IFilterVerifier {
+
+
+	@Override
+	public boolean doVerify(ProdIterator iterator, Map<String, String> map, boolean hasResult) {
+		if(!iterator.hasNext()){
+			iterator.reSet();
+		}
+		while(iterator.hasNext()){
+			Node node = iterator.next();
+			if(!isPreSale(node,hasResult)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isPreSale(Node node,boolean hasResult){
+
+		
+		Product product = new Product();
+
+		// 对product赋值
+		product.setProduct_id(XMLParser.product_id(node));
+		product.setPre_sale(XMLParser.product_preSale(node));
+		product.setProduct_type(XMLParser.product_type(node));
+		if(hasResult && !product.getProduct_type().equals("60")){
+			logger.error(" - [PRESALE] - "+product.getProduct_id()
+					+ " : it is not a pre sale porduct.");
+			logger.error(" - [PRESALE] - Product type:"+product.getProduct_type()+" pre sale:"+product.getPre_sale());
+			return false;
+		}else if(!hasResult && product.getProduct_type().equals("60")){
+			logger.error(" - [PRESALE-NORESULT] - "+product.getProduct_id()
+					+ " : it is a pre sale porduct.");
+			logger.error(" - [PRESALE-NORESULT] - Product type:"+product.getProduct_type()+" pre sale:"+product.getPre_sale());
+			return true;
+		}
+		return true;
+	
+	}
+}

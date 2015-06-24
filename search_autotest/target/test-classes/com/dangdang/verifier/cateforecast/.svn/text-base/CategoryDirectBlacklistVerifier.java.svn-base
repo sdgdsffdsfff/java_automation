@@ -1,0 +1,68 @@
+package com.dangdang.verifier.cateforecast;
+
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Node;
+import org.slf4j.LoggerFactory;
+
+import com.dangdang.client.SearchRequester;
+import com.dangdang.client.URLBuilder;
+import com.dangdang.data.FuncQuery;
+import com.dangdang.util.XMLParser;
+
+/**
+ * 对分类直达黑名单功能进行验证
+ * 
+ * @author zhangxiaojing
+ * 
+ */
+public class CategoryDirectBlacklistVerifier {
+	
+	//日志记录
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CategoryDirectBlacklistVerifier.class);
+
+	
+	public static boolean Verify(FuncQuery query){
+		//得到Query词
+		String sourceQuery = query.getFquery();
+			//构造url的参数map
+			Map<String,String> urlMap = new HashMap<String,String>();
+			urlMap.put("st", "full");
+			urlMap.put("um", "search_ranking");
+			urlMap.put("_new_tpl", "1");
+			urlMap.put("q",sourceQuery);
+			//访问后台，得到返回的xml结果
+			String url = URLBuilder.buildUrl(urlMap);
+			String xml = SearchRequester.get(url);
+			
+			try {
+				Document doc = XMLParser.read(xml);
+				List<Node> pathList = XMLParser.pathInfo(doc);
+				if(pathList!=null){
+					//验证是否为分类直达(是否包含(result\StatInfo\Path节点)
+					if(pathList.size()>0){
+						for(Node node:pathList){
+							//验证搜索结果中预测分类节点(result\StatInfo\Path\...\CatPath)不包含图书分类(01开头)
+							String catePath = XMLParser.catePath(node);
+							if(catePath.startsWith("01")){
+								logger.error("the category path should not start with 01!");
+								return false;
+							}
+						}
+					}
+				}
+			} catch (MalformedURLException | DocumentException e) {
+				e.printStackTrace();
+				return false;
+			}	
+	
+	    logger.info(" - [LOG_SUCCESS] - "+"Test Successed! Query:"+sourceQuery);
+		return true;
+	}	
+
+}

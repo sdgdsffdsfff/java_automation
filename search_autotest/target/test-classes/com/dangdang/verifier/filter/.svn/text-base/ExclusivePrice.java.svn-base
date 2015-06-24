@@ -1,0 +1,151 @@
+package com.dangdang.verifier.filter;
+
+import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Node;
+import com.dangdang.client.SearchRequester;
+import com.dangdang.data.Product;
+import com.dangdang.util.Config;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IFilterVerifier;
+/**   
+ * @author liuzhipengjs@dangdang.com  
+ * @version 创建时间：2014年10月28日 下午3:26:39  
+ * 类说明:手机专享价过滤筛选验证  /////手机专享价更新变动数据源变化，依据XML判断存在错误率
+ */
+public class ExclusivePrice extends IFilterVerifier {
+
+	@Override
+	public boolean doVerify(ProdIterator iterator, Map<String, String> map, boolean hasResult) {
+		//筛选无结果时的验证太慢，耗时太长，忽略
+		if (!hasResult) {
+			return true;
+		}
+		
+		Date now = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(!iterator.hasNext()){
+			iterator.reSet();
+		}
+		while(iterator.hasNext()){
+			Node node = iterator.next();
+			String produckidString = XMLParser.product_id(node);
+			String pcpriceString = XMLParser.product_dd_sale_price(node);
+			
+			Map<String, String> urlmap = new HashMap<String, String>();
+			//不需要"q"
+//			try {
+//				urlmap.put("q", URLEncoder.encode(map.get("query"), "GBK"));
+//			} catch (UnsupportedEncodingException e1) {
+//				ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+//				e1.printStackTrace(new PrintStream(baos));  
+//				String exception = baos.toString();  
+//				logger.error(" - [LOG_EXCEPTION] - "+exception);
+//				e1.printStackTrace();
+//			}
+//			urlmap.put("ps", "60");
+//			urlmap.put("pg", "1");
+			urlmap.put("product_id", produckidString);
+			urlmap.put("is_mphone", "1");
+			urlmap.put("st", "full");
+			urlmap.put("um", "search_ranking");
+			urlmap.put("_new_tpl", "1");//search_ranking必加
+			
+			Set<String> keySet = urlmap.keySet();
+			StringBuffer url_part = new StringBuffer();
+			for (String keys : keySet) {
+				url_part.append(keys + "=" + urlmap.get(keys) + "&");
+			}
+			String baseURL = new Config().get_baseURL();
+			String url = baseURL + "?" + url_part.toString();
+			
+			String xml = SearchRequester.get(url);
+//			logger.info(url);
+			try {
+				Document doc = XMLParser.read(xml);
+				Node singlenode = doc.selectSingleNode("//result/Body/Product");
+				String mpriceString = XMLParser.product_dd_sale_price(singlenode);
+				if(!isExclusive(node, hasResult, format, now, pcpriceString, mpriceString)){
+					return false;
+				}
+			} catch (MalformedURLException | DocumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+	
+	
+	public boolean isExclusive(Node node,boolean hasResult,SimpleDateFormat format,Date now,String pcprice,String mprice){
+		
+		Product product = new Product();
+		product.setProduct_id(XMLParser.product_id(node));
+		product.setExclusive_begin_date(XMLParser.product_exclusive_begin_date(node));
+		product.setExclusive_end_date(XMLParser.product_exclusive_end_date(node));
+		
+		int pcp = Integer.valueOf(pcprice);
+		int mcp = Integer.valueOf(mprice);
+		
+		try {
+			//有结果时所有结果有效，无结果时原始url的所有结果都无效
+			if(hasResult && !isAvailable(product.getExclusive_begin_date(),product.getExclusive_end_date(),format,now,pcp,mcp)){
+				logger.error(" - [EXCLUSIVE] - "+"No exclusive price is setting on it. Product id="+product.getProduct_id());
+				return false;
+			}else if(!hasResult && isAvailable(product.getExclusive_begin_date(),product.getExclusive_end_date(),format,now,pcp,mcp)){
+				logger.error(" - [EXCLUSIVE-NORESULT] - "+"exclusive price is setting on it. Product id="+product.getProduct_id());
+				return false;
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			logger.error("- [EXCEPTION] - "+e.getMessage());
+			return false;
+		}
+		return true;
+	
+	}
+	/*
+	 * true有效，false无效
+	 */
+	public boolean isAvailable(String startDate,String endDate,SimpleDateFormat format,Date now,int pcp,int mcp) throws ParseException{
+		if (startDate.equals("")) {
+			logger.debug("- [EXCLUSIVE-NORESULT] - "+"Exclusive is not available!");	
+			return false;
+			}else {
+				if (mcp>=pcp) {
+					//无结果验证时改成info，防止日志刷屏
+					logger.info(" - [EXCEPTION-ERROR] - "+"pcprice less than mprice");
+					return false;
+				}
+				// 得到手机专享价的开始结束时间
+				Date exclusive_start = format.parse(startDate);
+				Date exclusive_end = format.parse(endDate);
+
+				// 判断设置的手机专享价是否还有效
+				return !isOutDate(exclusive_start,exclusive_end);
+			}
+	}
+	/*
+	 * true过期，false不过期
+	 */
+	public boolean isOutDate(Date start,Date end){
+		Date now = new Date();
+		if (now.before(end) && now.after(start)) {
+		logger.debug("- [EXCLUSIVE] - "+"Exclusive is available!");
+		return false;
+		} else {
+			logger.debug(" - [EXCLUSIVE] - "+"start:"+start.toString()+"end:"+end.toString());
+			logger.debug(" - [EXCLUSIVE] - "+"Exclusive is out date！");
+			return true;
+		}
+	}
+}

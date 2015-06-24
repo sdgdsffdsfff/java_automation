@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/repos/manual_automation/!svn/ver/237/search_team/search_autotest/src/test/java/com/dangdang/client
+END
+DBAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repos/manual_automation/!svn/ver/237/search_team/search_autotest/src/test/java/com/dangdang/client/DBAction.java
+END
+RPCClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/repos/manual_automation/!svn/ver/133/search_team/search_autotest/src/test/java/com/dangdang/client/RPCClient.java
+END
+SearchRequester.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/client/SearchRequester.java
+END
+URLBuilder.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/repos/manual_automation/!svn/ver/232/search_team/search_autotest/src/test/java/com/dangdang/client/URLBuilder.java
+END
+SearchRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/repos/manual_automation/!svn/ver/156/search_team/search_autotest/src/test/java/com/dangdang/client/SearchRequest.java
+END

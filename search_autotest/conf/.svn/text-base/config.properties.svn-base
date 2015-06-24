@@ -1,0 +1,23 @@
+#URL Builder
+#baseURL = http://10.255.254.29:52114/
+baseURL = http://10.255.254.71:8390/
+#baseURL = http://10.255.254.188:8390/
+#baseURL = http://10.255.254.174:8390/
+#baseURL = http://192.168.85.132:8390/
+QueryAnalysic=http://192.168.85.133:12345/query
+SearchLogFile=C:/Users/zhangyamin.DANGDANG/Desktop/search_log_sample.txt
+#http://192.168.85.131:9999/
+#http://10.255.254.188:8390/
+itemsfile = conf/cate_term.txt
+failedfile = logs/failed_term.txt
+successfile = logs/success_term.txt
+untestfile = logs/untest_term.txt
+termFixfile= logs/termonly.txt
+fullfixfile=logs/fullfix.txt
+db_url = jdbc:mysql://10.255.254.129:3306/search_test
+db_user = root
+db_pwd = password
+CateForecastSetting=0,33,34,35,36,37,38,42
+isSearchBG=true
+BH_Analysis=0,4,12,61
+PUB_Analysis=0,5,20,61

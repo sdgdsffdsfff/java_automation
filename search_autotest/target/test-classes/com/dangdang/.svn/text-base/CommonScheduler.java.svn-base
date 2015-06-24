@@ -1,0 +1,63 @@
+package com.dangdang;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+public class CommonScheduler {
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CommonScheduler.class);
+	@BeforeMethod 
+	public void setup() {  	
+	}  
+
+	@AfterMethod 
+	public void clearup() { 
+	}   
+	 
+	//翻页->
+	@Test(enabled=true,groups="p1")  
+	public void turn_page() { 
+		try{
+			long d = System.currentTimeMillis() ;
+			logger.info(Long.toString(d));	
+			TestLauncher tl = new TestLauncher();
+			tl.start("id < 100", "fvp_id in (16)");
+			long d2 = System.currentTimeMillis();
+			logger.info(Double.toString((d2-d)/1000.0));
+		} catch (Exception e) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+			e.printStackTrace();
+		} finally {	
+		}
+	}
+
+	//排序、过滤组合->
+	@Test(enabled=false)  
+	public void group() { 
+		try{
+			long d = System.currentTimeMillis() ;
+			logger.info(Long.toString(d));
+			TestLauncher tl = new TestLauncher();
+			tl.start("id < 720", "fvp_id in (0)");
+			long d2 = System.currentTimeMillis();
+			logger.info(Double.toString((d2-d)/1000.0));
+		} catch (Exception e) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+			e.printStackTrace(new PrintStream(baos));  
+			String exception = baos.toString();  
+			logger.error(" - [LOG_EXCEPTION] - "+exception);
+			e.printStackTrace();
+		} finally {	
+		}
+	}
+	
+	
+	
+}

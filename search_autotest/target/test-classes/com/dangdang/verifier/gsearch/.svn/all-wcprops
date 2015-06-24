@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch
+END
+DigitalProductSearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch/DigitalProductSearchVerifier.java
+END
+EBookSearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch/EBookSearchVerifier.java
+END
+SearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch/SearchVerifier.java
+END
+MusicSearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch/MusicSearchVerifier.java
+END
+B2cSearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch/B2cSearchVerifier.java
+END
+VedioSearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch/VedioSearchVerifier.java
+END
+BookSearchVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/gsearch/BookSearchVerifier.java
+END

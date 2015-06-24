@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/repos/manual_automation/!svn/ver/238/search_team/search_autotest/src/test/java/com/dangdang
+END
+CategoryStrategyScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/repos/manual_automation/!svn/ver/238/search_team/search_autotest/src/test/java/com/dangdang/CategoryStrategyScheduler.java
+END
+SearchCustomScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repos/manual_automation/!svn/ver/238/search_team/search_autotest/src/test/java/com/dangdang/SearchCustomScheduler.java
+END
+SeasonTimenessScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/SeasonTimenessScheduler.java
+END
+CategoryDirectBlacklistScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/CategoryDirectBlacklistScheduler.java
+END
+TestLauncher.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/repos/manual_automation/!svn/ver/156/search_team/search_autotest/src/test/java/com/dangdang/TestLauncher.java
+END
+CateForecastScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/CateForecastScheduler.java
+END
+SegmentTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/repos/manual_automation/!svn/ver/209/search_team/search_autotest/src/test/java/com/dangdang/SegmentTest.java
+END
+BlackListScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/repos/manual_automation/!svn/ver/238/search_team/search_autotest/src/test/java/com/dangdang/BlackListScheduler.java
+END
+FilterSearchScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repos/manual_automation/!svn/ver/236/search_team/search_autotest/src/test/java/com/dangdang/FilterSearchScheduler.java
+END
+GSearchScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/repos/manual_automation/!svn/ver/218/search_team/search_autotest/src/test/java/com/dangdang/GSearchScheduler.java
+END
+DupliScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/DupliScheduler.java
+END
+SortSearchScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/SortSearchScheduler.java
+END
+NoUMSeachVerifierScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/NoUMSeachVerifierScheduler.java
+END
+TopAndNoPictureProductScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/TopAndNoPictureProductScheduler.java
+END
+ClothBizSortScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/ClothBizSortScheduler.java
+END
+NewProdWeightScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/repos/manual_automation/!svn/ver/168/search_team/search_autotest/src/test/java/com/dangdang/NewProdWeightScheduler.java
+END
+CommonScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/CommonScheduler.java
+END
+NewProdCount.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/repos/manual_automation/!svn/ver/238/search_team/search_autotest/src/test/java/com/dangdang/NewProdCount.java
+END
+CategoryAngQueryScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/repos/manual_automation/!svn/ver/238/search_team/search_autotest/src/test/java/com/dangdang/CategoryAngQueryScheduler.java
+END
+ScenarioSearchScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/repos/manual_automation/!svn/ver/225/search_team/search_autotest/src/test/java/com/dangdang/ScenarioSearchScheduler.java
+END
+CTR_AnalysisScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/CTR_AnalysisScheduler.java
+END
+VSearchScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/VSearchScheduler.java
+END
+BookTitleScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/BookTitleScheduler.java
+END
+CbookScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/CbookScheduler.java
+END
+EBookScheduler.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/EBookScheduler.java
+END

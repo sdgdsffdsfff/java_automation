@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/repos/manual_automation/!svn/ver/168/search_team/search_autotest/src/test/java/com/dangdang/verifier/sort
+END
+LastInputVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/sort/LastInputVerifier.java
+END
+PageTurnVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/sort/PageTurnVerifier.java
+END
+PriceAscVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/repos/manual_automation/!svn/ver/119/search_team/search_autotest/src/test/java/com/dangdang/verifier/sort/PriceAscVerifier.java
+END
+SaleWeekVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/verifier/sort/SaleWeekVerifier.java
+END
+CommentDescVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/sort/CommentDescVerifier.java
+END
+PriceDescVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repos/manual_automation/!svn/ver/106/search_team/search_autotest/src/test/java/com/dangdang/verifier/sort/PriceDescVerifier.java
+END

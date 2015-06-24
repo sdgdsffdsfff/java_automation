@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/manual_automation/!svn/ver/238/search_team/search_autotest
+END
+all.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/repos/manual_automation/!svn/ver/234/search_team/search_autotest/all.xml
+END
+cSearch.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/cSearch.xml
+END
+batch_run.bat
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/batch_run.bat
+END
+pom.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/repos/manual_automation/!svn/ver/219/search_team/search_autotest/pom.xml
+END
+analysis_log.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/analysis_log.py
+END
+tail.bat
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/tail.bat
+END

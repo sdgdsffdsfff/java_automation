@@ -1,0 +1,82 @@
+package com.dangdang.data;
+
+public class BlackListQuery {
+	
+	private String query;
+	private String id_type;
+	private String black_id;
+	private String start_date;
+	private String end_date;
+	private int weight;
+	private String op_type;
+	private String punish_type;
+	private String category_path;
+	private String commons;
+	
+	public String getQuery() {
+		return query;
+	}
+	public void setQuery(String query) {
+		this.query = query;
+	}
+	public String getIdType() {
+		return id_type;
+	}
+	public void setIdType(String id_type) {
+		this.id_type = id_type;
+	}
+	public String getBlackId() {
+		return black_id;
+	}
+	public void setBlackId(String black_id) {
+		this.black_id = black_id;
+	}
+	public String getStartDate() {
+		return start_date;
+	}
+	public void setStartDate(String start_date) {
+		this.start_date = start_date;
+	}
+	public String getEndDate() {
+		return end_date;
+	}
+	public void setEndDate(String end_date) {
+		this.end_date = end_date;
+	}
+	public int getWeight() {
+		return weight;
+	}
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+	public String getOptype() {
+		return op_type;
+	}
+	public void setOptype(String op_type) {
+		this.op_type = op_type;
+	}
+	public String getPunishType() {
+		return punish_type;
+	}
+	public void setPunishType(String punish_type) {
+		this.punish_type = punish_type;
+	}
+	public String getCategoryPath() {
+		return category_path;
+	}
+	public void setCategoryPath(String category_path) {
+		this.category_path = category_path;
+	}
+	/**
+	 * @return the commons
+	 */
+	public String getCommons() {
+		return commons;
+	}
+	/**
+	 * @param commons the commons to set
+	 */
+	public void setCommons(String commons) {
+		this.commons = commons;
+	}
+}

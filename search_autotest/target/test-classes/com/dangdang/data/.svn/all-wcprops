@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data
+END
+SourceItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/SourceItem.java
+END
+Product.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/Product.java
+END
+FuncQuery.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/FuncQuery.java
+END
+FuncVP.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/FuncVP.java
+END
+AttribMap.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/AttribMap.java
+END
+FilterMap.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/FilterMap.java
+END
+PidCatPaths.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/PidCatPaths.java
+END
+FuncCatePath.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/FuncCatePath.java
+END
+VerticalSearchQuery.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/VerticalSearchQuery.java
+END
+SearchLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/SearchLog.java
+END
+FuncPermReco.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/FuncPermReco.java
+END
+FuncQueryPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/FuncQueryPool.java
+END
+BlackListQuery.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/repos/manual_automation/!svn/ver/76/search_team/search_autotest/src/test/java/com/dangdang/data/BlackListQuery.java
+END

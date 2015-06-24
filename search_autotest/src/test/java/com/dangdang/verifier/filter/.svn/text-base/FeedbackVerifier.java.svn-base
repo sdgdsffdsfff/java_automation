@@ -1,0 +1,44 @@
+package com.dangdang.verifier.filter;
+
+import java.util.Map;
+
+import org.dom4j.Node;
+import com.dangdang.data.FilterMap;
+import com.dangdang.util.ProdIterator;
+import com.dangdang.util.XMLParser;
+import com.dangdang.verifier.iVerifier.IFilterVerifier;
+
+public class FeedbackVerifier extends IFilterVerifier  {
+
+	@Override
+	public boolean doVerify(ProdIterator iterator, Map<String, String> map, boolean hasResult) {
+		String feedback = FilterMap.getFilterMap().get("feedback");
+		if(!iterator.hasNext()){
+			iterator.reSet();
+		}
+		while (iterator.hasNext()){
+			Node prod = iterator.next();
+			if(!isFeedback(prod, hasResult, feedback)){
+				return false;
+			}
+		}
+		logger.debug(String.format(" -  [CHECK-PASS-INFO] check pass for 【label_id】 filte : %s",feedback));
+		return true;
+	}
+	
+	public boolean isFeedback(Node prod,boolean hasResult,String feedback){
+		logger.debug("/****************************product**************************/");
+		String pid = XMLParser.product_id(prod);
+		String labelid = XMLParser.product_label(prod);
+		logger.debug("/****************************end**************************/");
+		String key = String.format("^%s\\d+-?.*|.*-%s\\d+-?.*", feedback, feedback);
+		if (hasResult && !labelid.matches(key)){
+			logger.error(String.format(" -  [CHECK-FAIL-INFO] %s : actual: %s; expect: %s", pid, labelid, feedback));
+			return false;
+		}else if (!hasResult && labelid.matches(key)){
+			logger.error(String.format(" -  [CHECK-NO-RESULT] %s : actual: %s; expect: %s", pid, labelid, feedback));
+			return false;
+		}
+		return true;
+	}
+}
